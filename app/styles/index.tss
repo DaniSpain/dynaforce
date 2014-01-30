@@ -1,0 +1,25 @@
+
+"Label": {
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE,
+	color: "#000"
+} 
+
+"#activityIndicator": {
+	color: '#ffffff',
+  	font: {fontFamily:'Helvetica Neue', fontSize:26, fontWeight:'bold'},
+  	style: Alloy.Globals.style,
+  	top: 50,
+  	backgroundColor: '#CFCFCF',
+  	height:Ti.UI.SIZE,
+  	width:Ti.UI.SIZE
+}
+
+"Button": {
+	backgroundColor: '#DEDEDE',
+	top: 10,
+	width: 200,
+	height: 100
+}
+
+

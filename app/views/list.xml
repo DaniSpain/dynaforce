@@ -1,0 +1,19 @@
+<Alloy>
+	<Window>
+		<View id="header">
+    	  <View id="backView" onClick="closeWindow">
+	        <ImageView id="backImage"/>
+	      </View>
+	      <Label id="headerTitle">My Accounts</Label>
+	      <!--
+	      <View id="addView">
+	        <ImageView id="addImage"/>
+	      </View>
+	      -->
+	    </View>
+	    
+		<TableView id="tblView">
+			
+        </TableView>
+	</Window>
+</Alloy>

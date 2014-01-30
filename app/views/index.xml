@@ -1,0 +1,12 @@
+<Alloy>
+	<Window onOpen="showIndicator" class="container">
+		
+		<!-- Define the styling properties in the TSS file -->
+        <ActivityIndicator id="activityIndicator" message="Loading..." />
+        
+        <View layout="vertical" height="Ti.UI.SIZE" width="Ti.UI.SIZE">
+			<Button title="Accounts" onClick="openAccountList" />
+	        <Button title="Contacts" onClick="openContactList" />
+        </View>
+	</Window>
+</Alloy>
