@@ -47,7 +47,7 @@ exports.init = function() {
 
 	Ti.API.info('[dynaforce] CREATE TABLE IF NOT EXISTS ObjectFieldMap ' + 
 			'(field TEXT, sfdctype TEXT, sobject TEXT, label TEXT, isUsed BOOLEAN, ' + 
-			' PRIMARY KEY((field, sobject));');				
+			' PRIMARY KEY(field, sobject));');				
 	try {
 		//create field map table
 		db.execute('CREATE TABLE IF NOT EXISTS ObjectFieldMap ' + 
@@ -64,8 +64,8 @@ exports.init = function() {
 			' PRIMARY KEY(field, sobject));');
 	try {
 		//create picklist table
-		db.execute('CREATE TABLE IF NOT EXISTS Picklist(id INTEGER PRIMARY KEY AUTOINCREMENT, value TEXT, field TEXT, sobject TEXT, label TEXT, ' + 
-			' UNIQUE(field, sobject) ON CONFLICT REPLACE);'
+		db.execute('CREATE TABLE IF NOT EXISTS Picklist(value TEXT, field TEXT, sobject TEXT, label TEXT, ' + 
+			' PRIMARY KEY(field, sobject));'
 		);
 		//db.execute('CREATE UNIQUE INDEX IF NOT EXISTS Picklist_idx ON Picklist(value, field, sobject);');
 		Ti.API.info('[dynaforce] Table Picklist SUCCESSFULLY CREATED');
@@ -74,9 +74,10 @@ exports.init = function() {
 	}
 	
 	Ti.API.info('[dynaforce] CREATE TABLE IF NOT EXISTS DetailLayout(position TINYINT, field TEXT, sobject TEXT, ' + 
-			' PRIMARY KEY((position, sobject) ON CONFLICT REPLACE);');				
+			' PRIMARY KEY(position, sobject) ON CONFLICT REPLACE);');				
 	try {
 		//create detail layout table
+		db.execute('DROP TABLE IF EXISTS DetailLayout');
 		db.execute('CREATE TABLE IF NOT EXISTS DetailLayout(position TINYINT, field TEXT, sobject TEXT, ' + 
 			' PRIMARY KEY(position, sobject));'
 		);
@@ -90,6 +91,7 @@ exports.init = function() {
 			' PRIMARY KEY(position, sobject));');			
 	try {
 		//create list layout table
+		db.execute('DROP TABLE IF EXISTS ListLayout');
 		db.execute('CREATE TABLE IF NOT EXISTS ListLayout(position TINYINT, field TEXT, sobject TEXT, ' + 
 			' PRIMARY KEY(position, sobject));'
 		);
@@ -104,6 +106,7 @@ exports.init = function() {
 			' UNIQUE(position, sobject) ON CONFLICT REPLACE);');				
 	try {
 		//create edit layout table
+		db.execute('DROP TABLE IF EXISTS EditLayout');
 		db.execute('CREATE TABLE IF NOT EXISTS EditLayout(id INTEGER PRIMARY KEY AUTOINCREMENT, position TINYINT, field TEXT, sobject TEXT, ' + 
 			' UNIQUE(position, sobject) ON CONFLICT REPLACE);'
 		);
@@ -128,6 +131,45 @@ exports.resetSync = function() {
 	Ti.API.info('[dynaforce] ' + JSON.stringify(sobjectSync));
 	//startSync();
 	//callbacks.success();
+};
+
+exports.syncListLayoutConf = function(callbacks) {
+	var layoutObject = 'Layout_Configurator__c';
+	var localObject = 'ListLayout';
+	var queryString = 'SELECT Field_Name__c, Object__c, Order__c, IsDeleted FROM ' + layoutObject;
+	Alloy.Globals.force.request({
+		type:'GET',
+		url:'/query/?q='+Ti.Network.encodeURIComponent(queryString),
+		callback: function(data) {
+			var db = Ti.Database.open(Alloy.Globals.dbName);
+			Ti.API.info('[dynaforce] DATA: ' + JSON.stringify(data));
+			var records = data.records;
+			for (var i=0; i<records.length; i++) {
+				Ti.API.info('[dynaforce] RECORD: ' + JSON.stringify(records[i]));
+								
+				var record = records[i];
+				if (record.IsDeleted!=true) {
+					Ti.API.info('[dynaforce] INSERT OR REPLACE INTO ' + localObject + ' VALUES ("' + record.Order__c + '", "' + record.Field_Name__c + '", "' + record.Object__c + '");');
+					try {
+						db.execute('INSERT OR REPLACE INTO ' + localObject + ' VALUES ("' + record.Order__c + '", "' + record.Field_Name__c + '", "' + record.Object__c + '");');
+					} catch (e) {
+						Ti.API.error('[dynaforce] exception inserting data in ' + localObject + ' table: ' + e);
+					}
+				} else {
+					Ti.API.info('[dynaforce] RECORD is DELETED: removing from local DB');
+					Ti.API.info('[dynaforce] DELETE FROM ' + localObject + ' WHERE (position = "' + record.Order__c + '" AND sobject = "' + record.Object__c + '");');
+					try {
+						db.execute('DELETE FROM ' + localObject + ' WHERE (position = "' + record.Order__c + '" AND sobject = "' + record.Object__c + '");');
+					} catch (e) {
+						Ti.API.info('[dynaforce] Exception deleting row: ' + e);
+					}
+				}
+			}
+			db.close;
+			Ti.API.info('[dynaforce] ListLayout UPDATED');
+			callbacks.success();
+		}
+	});
 };
 
 exports.startSync = function(callbacks) {
@@ -166,6 +208,7 @@ exports.startSync = function(callbacks) {
 					Ti.API.info('[dynaforce] OBJECT NAME: ' + data.name);
 
 					try {
+						//db.execute('CREATE TABLE IF NOT EXISTS ' + sobject + '(Id CHARACTER(20), LocalId INTEGER AUTOINCREMENT, PRIMARY KEY(Id, LocalId));');
 						db.execute('CREATE TABLE IF NOT EXISTS ' + sobject + '(Id CHARACTER(20) PRIMARY KEY);');
 						Ti.API.info('[dynaforce] TABLE ' + sobject + ' SUCCESSFULLY CREATED (with no columns) OR ALREADY EXISTS');
 					} catch (e) {
@@ -175,12 +218,14 @@ exports.startSync = function(callbacks) {
 					
 					for (var i=0; i<fields.length; i++) {
 						var f = fields[i];
+						/*
 						Ti.API.info('[dynaforce] FIELD NAME: ' + f.name);
 						Ti.API.info('[dynaforce] FIELD TYPE: ' + f.type);
 						Ti.API.info('[dynaforce] FIELD LABEL: ' + f.label);
 						if (f.type == 'reference') {
 							Ti.API.info('[dynaforce] REFERENCE TO: ' + f.referenceTo[0]);
 						}
+						*/
 						fieldList[i] = f.name;
 						typeList[i] = f.type;
 						
@@ -293,8 +338,9 @@ exports.startSync = function(callbacks) {
 					}
 					used.close();
 					
-					//the Id is dhe default accepted field
+					//the Id is dhe default accepted field and LocalId is default created
 					usedFields.push('Id');
+					//usedFields.push('LocalId');
 					//now start integrate data
 					var queryString = 'SELECT ';
 					for (var i=0; i<usedFields.length; i++) {
@@ -335,9 +381,11 @@ exports.startSync = function(callbacks) {
 									}
 								}
 								var insertQuery = statement + ') ' + values + ');';
+								/*
 								Ti.API.info('[dynaforce] --- INSERT QUERY --- '); 
 								Ti.API.info('[dynaforce] ' + statement + ')');
 								Ti.API.info('[dynaforce] ' + values + ')');
+								*/
 								try {
 									db.execute(insertQuery);
 									Ti.API.info('[dynaforce] INSERT SUCCESS');

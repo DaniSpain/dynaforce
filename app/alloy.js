@@ -18,13 +18,15 @@ Alloy.Globals.force = require('force');
 Alloy.Globals.dynaforce = require('dynaforce');
 Alloy.Globals.dbName = "appDb";
 
+
 Alloy.Globals.style;
 if (Ti.Platform.name === 'iPhone OS'){
-  Alloy.Globals.style = Ti.UI.iPhone.ActivityIndicatorStyle.DARK;
+  Alloy.Globals.style = Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN;
 }
 else {
-  Alloy.Globals.style = Ti.UI.ActivityIndicatorStyle.DARK;
+  Alloy.Globals.style = Ti.UI.ActivityIndicatorStyle.PLAIN;
 }
+
 
 if (OS_IOS || OS_ANDROID) {
 	//Alloy.Collections.todo = Alloy.createCollection('todo');

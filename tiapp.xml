@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
-	<!-- Salesforce Configuration -->
+    <!-- Salesforce Configuration -->
     <property name="force.consumer.key" type="string">3MVG99qusVZJwhsnPLzhxuPquR9SHSnLLGA06_zljQjDI6yxiu12KpkVIgna5sVRYKX2bRM5XV7vIO6aDFI1q</property>
     <property name="force.consumer.secret" type="string">3240227695155818712</property>
-    
     <!-- Custon properties -->
     <property name="ti.ui.defaultunit" type="string">dip</property>
-    
     <id>com.ds.dynaforce</id>
     <name>dynaforce</name>
     <version>1.0</version>
     <publisher>daniele</publisher>
     <url>http://appycloud.appspot.com</url>
-    <description>not specified</description>
+    <description>Dynaforce application boilerplate for Salesforce.com integrated Mobile Apps</description>
     <copyright>2014 by daniele</copyright>
     <icon>appicon.png</icon>
     <fullscreen>false</fullscreen>

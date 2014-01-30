@@ -1,12 +1,30 @@
 <Alloy>
-	<Window onOpen="showIndicator" class="container">
+	<Window onOpen="showIndicator" class="container" navBarHidden="true">
 		
-		<!-- Define the styling properties in the TSS file -->
-        <ActivityIndicator id="activityIndicator" message="Loading..." />
-        
-        <View layout="vertical" height="Ti.UI.SIZE" width="Ti.UI.SIZE">
-			<Button title="Accounts" onClick="openAccountList" />
-	        <Button title="Contacts" onClick="openContactList" />
-        </View>
+		<View class="header">
+		  
+		  <View class="iconWrap">
+	       <ImageView class="dynaIcon"/>
+	      </View>
+	    
+	      <Label id="headerTitle">Dynaforce</Label>
+	      <!--
+	      <View id="addView">
+	        <ImageView id="addImage"/>
+	      </View>
+	      -->
+	    </View>
+	    
+	    <View id="content">
+			<!-- Define the styling properties in the TSS file -->
+	        
+	        
+	        <View layout="vertical" height="Ti.UI.SIZE" width="Ti.UI.SIZE">
+				<Button title="Accounts" onClick="openAccountList" />
+		        <Button title="Contacts" onClick="openContactList" />
+	        </View>
+	        
+	        <ActivityIndicator id="activityIndicator" />
+	    </View>
 	</Window>
 </Alloy>

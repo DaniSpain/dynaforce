@@ -1,0 +1,10 @@
+android/ATTR_MINIFY=true
+android/ATTR_PROJECT_NAME=dynaforce
+android/abi=armeabi-v7a
+android/distribute_path=/Users/daniele/Documents/Titanium/Distribution
+android/keystore_alias=dspagnuolo
+android/keystore_password=atlantic1
+android/keystore_path=/Users/daniele/Documents/Titanium/Distribution/keystore
+android/recent_output=/Users/daniele/Documents/Titanium/Distribution
+android/sdk_version=4.1.2
+eclipse.preferences.version=1

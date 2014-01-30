@@ -7,19 +7,28 @@
 
 "#activityIndicator": {
 	color: '#ffffff',
-  	font: {fontFamily:'Helvetica Neue', fontSize:26, fontWeight:'bold'},
+  	font: {fontFamily:'Helvetica Neue', fontSize:16, fontWeight:'bold'},
   	style: Alloy.Globals.style,
-  	top: 50,
-  	backgroundColor: '#CFCFCF',
-  	height:Ti.UI.SIZE,
-  	width:Ti.UI.SIZE
+  	top: 0,
+  	backgroundColor: '#0099CC',
+  	height:Ti.UI.FILL,
+  	width:Ti.UI.FILL,
 }
 
 "Button": {
-	backgroundColor: '#DEDEDE',
+	color: '#0099CC',
+	backgroundColor: '#ffffff',
+	font: {fontFamily:'Helvetica Neue', fontSize:18},
 	top: 10,
 	width: 200,
 	height: 100
+}
+
+"#content": {
+	top: Alloy.Globals.tableTop,
+	height: Ti.UI.FILL,
+	width: Ti.UI.FILL,
+	backgroundColor: '##33B5E5'
 }
 
 

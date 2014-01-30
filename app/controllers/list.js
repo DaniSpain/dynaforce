@@ -1,8 +1,14 @@
 var args = arguments[0] || {};
 
+
+
 //this value will be passed from the parent screen
 var sobject = args['sobject'];
 Ti.API.info('[dynaforce] PASSED SOBJECT: ' + sobject);
+
+
+$.list.open();
+
 
 var db = Ti.Database.open(Alloy.Globals.dbName);
 
@@ -77,7 +83,6 @@ rowset.close();
 
 db.close();
 
-$.list.open();
 
 function closeWindow(e) {
 	$.list.close();

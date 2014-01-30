@@ -1,6 +1,6 @@
 <Alloy>
-	<Window>
-		<View id="header">
+	<Window navBarHidden="true">
+		<View class="header">
     	  <View id="backView" onClick="closeWindow">
 	        <ImageView id="backImage"/>
 	      </View>
@@ -15,5 +15,6 @@
 		<TableView id="tblView">
 			
         </TableView>
+        
 	</Window>
 </Alloy>

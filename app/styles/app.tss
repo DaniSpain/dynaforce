@@ -2,7 +2,7 @@
 	backgroundColor: "#ffffff"	
 }
 
-"#header" : {
+".header" : {
 	top: Alloy.Globals.top,
 	height: "50dp",
 	width: Ti.UI.FILL,
@@ -25,6 +25,12 @@
 	width: "50dp"
 }
 
+".iconWrap" : { 
+	left: 10,
+	width: 40,
+	height: 40
+}
+
 "#backImage" : {
 	height: Ti.UI.FILL,
 	width: Ti.UI.FILL,
@@ -32,6 +38,15 @@
 	backgroundColor: "transparent",
 	image: "/images/ic_action_back.png",
 	//touchEnabled: false
+}
+
+".dynaIcon" : {  
+	height: Ti.UI.FILL,
+	width: Ti.UI.FILL,
+	color: "#fff",
+	backgroundColor: "transparent",
+	image: "/images/icon.png",
+	touchEnabled: false
 }
 
 "#closeView" : {

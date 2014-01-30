@@ -10,18 +10,13 @@ Alloy.Globals.dbName = "appDb";
 
 Alloy.Globals.style;
 
-Alloy.Globals.style = Ti.UI.iPhone.ActivityIndicatorStyle.PLAIN;
+Alloy.Globals.style = Ti.UI.ActivityIndicatorStyle.PLAIN;
 
 Alloy.Globals.top = 0;
 
 Alloy.Globals.tableTop = "50dp";
 
-try {
-    if (true && parseInt(Titanium.Platform.version.split(".")[0], 10) >= 7) {
-        Alloy.Globals.top = "20dp";
-        Alloy.Globals.tableTop = "70dp";
-    }
-} catch (e) {}
+try {} catch (e) {}
 
 Alloy.Globals.SFDCSQLiteFieldMap = {
     string: "TEXT",
