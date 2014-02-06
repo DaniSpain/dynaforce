@@ -133,6 +133,12 @@ exports.resetSync = function() {
 	//callbacks.success();
 };
 
+/**
+ * execute the sync of the object defined in the sobjectSync JSON structure
+ * callbacks
+ * 	indicator: the ActivityIndicator Ti object
+ * 	success: what to do when the app success
+ */
 exports.syncListLayoutConf = function(callbacks) {
 	var layoutObject = 'Layout_Configurator__c';
 	var localObject = 'ListLayout';
@@ -187,7 +193,7 @@ exports.startSync = function(callbacks) {
 		row.synched = true;
 		var sobject = row.sobject;
 		Ti.API.info('[dynaforce] SYNCHRONIZING SOBJECT: ' + sobject);
-		
+		callbacks.indicator.setMessage('Sync ' + sobject + ' Data and Structure');
 		Alloy.Globals.force.request({
 		type:'GET',
 		url:'/sobjects/' + sobject + '/describe', 
@@ -250,6 +256,10 @@ exports.startSync = function(callbacks) {
 								if (SFDCSQLiteFieldMap.hasOwnProperty(f.type)) {
 									//this means that it is a "normal" field
 									var sqliteType = SFDCSQLiteFieldMap[f.type];
+									
+									
+									
+									
 									try {
 										Ti.API.info('[dynaforce] ' + 'ALTER TABLE ' + sobject + ' ADD COLUMN ' + f.name + ' ' + sqliteType);
 										db.execute('ALTER TABLE ' + sobject + ' ADD COLUMN ' + f.name + ' ' + sqliteType + ';');
@@ -331,15 +341,19 @@ exports.startSync = function(callbacks) {
 					*/
 					/*********************************/
 					
-					var used = db.execute('SELECT field FROM ObjectFieldMap WHERE sobject = "' + sobject + '" AND isUsed = 1;');
+					var used = db.execute('SELECT field, sfdctype FROM ObjectFieldMap WHERE sobject = "' + sobject + '" AND isUsed = 1;');
+					var usedFieldTypes = [];
 					while (used.isValidRow()) {
 						usedFields.push(used.fieldByName('field'));
+						usedFieldTypes.push(used.fieldByName('sfdctype'));
 						used.next();
 					}
 					used.close();
 					
 					//the Id is dhe default accepted field and LocalId is default created
 					usedFields.push('Id');
+					usedFieldTypes.push('id');
+					
 					//usedFields.push('LocalId');
 					//now start integrate data
 					var queryString = 'SELECT ';
@@ -370,10 +384,28 @@ exports.startSync = function(callbacks) {
 								
 								for (var j=0; j<usedFields.length; j++) {
 									var field = usedFields[j];
+									var type = usedFieldTypes[j];
 									var value = record[usedFields[j]];
+									
+									/*** MANAGING FIELD TYPE EXCEPTIONS ***/
+									
+									if (value!=null) {
+										/*
+										if (type=="datetime") {
+											try {
+												var dateUtils = require('sfdcDate');
+												value = dateUtils.convertDateTime(value);	
+											} catch (e) {
+												Ti.API.error('[dynaforce] Exception converting datetime: ' + e);
+											}
+										}
+										*/
+									}
+									
+									
 									statement += field;
 									if (value!=null)
-										values += '\'' + value + '\'';
+										values += '"' + value + '"';
 									else values += null;
 									if (j!=usedFields.length-1) {
 										statement += ',';
@@ -430,8 +462,18 @@ exports.startSync = function(callbacks) {
 							
 							Ti.API.info('[dynaforce] RESTARTING SYNC');
 							try {
-								//startSync();
-								callbacks.success();
+								if (k!=sobjectSync.length) {
+									exports.startSync({
+										indicator: callbacks.indicator,
+										success: function () {
+											callbacks.success();
+										}
+									});
+								} else {
+									Ti.API.info('[dynaforce] SYNC COMPLETE');
+									callbacks.success();
+								}
+								//callbacks.success();
 							} catch (e) {
 								Ti.API.error('[dynaforce] RESTART SYNC Exception: ' + e);
 							}

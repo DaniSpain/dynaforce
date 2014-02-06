@@ -19,6 +19,7 @@ exports.readableField = function(field, sobject, dataRow) {
                 },
                 text: dataRow.fieldByName(field),
                 left: 10,
+                touchEnabled: false,
                 width: Ti.UI.SIZE,
                 height: Ti.UI.SIZE
             });
@@ -32,6 +33,7 @@ exports.readableField = function(field, sobject, dataRow) {
                 },
                 text: dataRow.fieldByName(field),
                 left: 10,
+                touchEnabled: false,
                 width: Ti.UI.SIZE,
                 height: Ti.UI.SIZE
             });
@@ -45,6 +47,7 @@ exports.readableField = function(field, sobject, dataRow) {
                 },
                 text: dataRow.fieldByName(field),
                 left: 10,
+                touchEnabled: true,
                 width: Ti.UI.SIZE,
                 height: Ti.UI.SIZE
             });
@@ -54,6 +57,24 @@ exports.readableField = function(field, sobject, dataRow) {
             emailDialog.messageBody = "<b>Appcelerator Titanium Rocks!</b>";
             label.addEventListener("click", function() {
                 emailDialog.open();
+            });
+            return label;
+        }
+        if ("date" == type || "datetime" == type) {
+            var dateUtils = require("sfdcDate");
+            var date = null;
+            if (null != dataRow.fieldByName(field)) var date = new Date(dateUtils.getDateTimeObject(dataRow.fieldByName(field)));
+            Ti.API.info("[dynaforce] LastModifiedDate: " + date);
+            var label = Ti.UI.createLabel({
+                color: "#366E36",
+                font: {
+                    fontSize: 15
+                },
+                text: date.toLocaleString(),
+                left: 10,
+                touchEnabled: false,
+                width: Ti.UI.SIZE,
+                height: Ti.UI.SIZE
             });
             return label;
         }

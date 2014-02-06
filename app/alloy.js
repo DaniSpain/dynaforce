@@ -18,6 +18,10 @@ Alloy.Globals.force = require('force');
 Alloy.Globals.dynaforce = require('dynaforce');
 Alloy.Globals.dbName = "appDb";
 
+Alloy.Globals.buttonSize = 140;
+Alloy.Globals.buttonRadius =Alloy.Globals.buttonSize/2;
+if (OS_ANDROID) Alloy.Globals.buttonRadius = Alloy.Globals.buttonSize;
+
 
 Alloy.Globals.style;
 if (Ti.Platform.name === 'iPhone OS'){

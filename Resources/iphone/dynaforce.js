@@ -119,6 +119,7 @@ exports.startSync = function(callbacks) {
         row.synched = true;
         var sobject = row.sobject;
         Ti.API.info("[dynaforce] SYNCHRONIZING SOBJECT: " + sobject);
+        callbacks.indicator.setMessage("Sync " + sobject + " Data and Structure");
         Alloy.Globals.force.request({
             type: "GET",
             url: "/sobjects/" + sobject + "/describe",
@@ -185,13 +186,16 @@ exports.startSync = function(callbacks) {
                         } else Ti.API.info("[dynaforce] NO STRUCTURE CHANGES FROM LAST SYNC");
                         check.close();
                     }
-                    var used = db.execute('SELECT field FROM ObjectFieldMap WHERE sobject = "' + sobject + '" AND isUsed = 1;');
+                    var used = db.execute('SELECT field, sfdctype FROM ObjectFieldMap WHERE sobject = "' + sobject + '" AND isUsed = 1;');
+                    var usedFieldTypes = [];
                     while (used.isValidRow()) {
                         usedFields.push(used.fieldByName("field"));
+                        usedFieldTypes.push(used.fieldByName("sfdctype"));
                         used.next();
                     }
                     used.close();
                     usedFields.push("Id");
+                    usedFieldTypes.push("id");
                     var queryString = "SELECT ";
                     for (var i = 0; usedFields.length > i; i++) queryString += i != usedFields.length - 1 ? usedFields[i] + "," : usedFields[i];
                     queryString += " FROM " + sobject;
@@ -211,9 +215,11 @@ exports.startSync = function(callbacks) {
                                 var values = "VALUES (";
                                 for (var j = 0; usedFields.length > j; j++) {
                                     var field = usedFields[j];
+                                    usedFieldTypes[j];
                                     var value = record[usedFields[j]];
+                                    null != value;
                                     statement += field;
-                                    values += null != value ? "'" + value + "'" : null;
+                                    values += null != value ? '"' + value + '"' : null;
                                     if (j != usedFields.length - 1) {
                                         statement += ",";
                                         values += ",";
@@ -230,7 +236,15 @@ exports.startSync = function(callbacks) {
                             db.close();
                             Ti.API.info("[dynaforce] RESTARTING SYNC");
                             try {
-                                callbacks.success();
+                                if (k != sobjectSync.length) exports.startSync({
+                                    indicator: callbacks.indicator,
+                                    success: function() {
+                                        callbacks.success();
+                                    }
+                                }); else {
+                                    Ti.API.info("[dynaforce] SYNC COMPLETE");
+                                    callbacks.success();
+                                }
                             } catch (e) {
                                 Ti.API.error("[dynaforce] RESTART SYNC Exception: " + e);
                             }

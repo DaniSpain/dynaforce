@@ -19,6 +19,7 @@ exports.readableField = function(field, sobject, dataRow) {
 	var db = Ti.Database.open(Alloy.Globals.dbName);
 	Ti.API.info('[dynaforce] [contolManager] SELECT sfdctype FROM ObjectFieldMap WHERE field = \'' + field + '\' AND sobject = \'' + sobject + '\';');
 	var rowset;
+	//retireve the Salesforce field type from the ObjectFieldMap table
 	try {
 		rowset = db.execute('SELECT sfdctype FROM ObjectFieldMap WHERE field = \'' + field + '\' AND sobject = \'' + sobject + '\' LIMIT 1;');
 	} catch (e) {
@@ -40,6 +41,7 @@ exports.readableField = function(field, sobject, dataRow) {
 				//shadowRadius: 3,
 				text: dataRow.fieldByName(field),
 				left: 10,
+				touchEnabled: false,
 				//top: 30,
 				width: Ti.UI.SIZE, height: Ti.UI.SIZE
 			});
@@ -56,6 +58,7 @@ exports.readableField = function(field, sobject, dataRow) {
 				//shadowRadius: 3,
 				text: dataRow.fieldByName(field),
 				left: 10,
+				touchEnabled: false,
 				//top: 30,
 				width: Ti.UI.SIZE, height: Ti.UI.SIZE
 			});
@@ -72,6 +75,7 @@ exports.readableField = function(field, sobject, dataRow) {
 				//shadowRadius: 3,
 				text: dataRow.fieldByName(field),
 				left: 10,
+				touchEnabled: true,
 				//top: 30,
 				width: Ti.UI.SIZE, height: Ti.UI.SIZE
 			});
@@ -81,6 +85,29 @@ exports.readableField = function(field, sobject, dataRow) {
 			emailDialog.messageBody = '<b>Appcelerator Titanium Rocks!</b>';
 			label.addEventListener('click', function(e) {
 				emailDialog.open();
+			});
+			return label;
+		}
+		
+		//CASE FIELD IS A DATE or DATE TIME
+		if (type=='date' || type=='datetime') {
+			var dateUtils = require('sfdcDate');
+			var date = null;
+			if (dataRow.fieldByName(field)!=null) 
+				var date = new Date(dateUtils.getDateTimeObject(dataRow.fieldByName(field)));
+				
+			Ti.API.info('[dynaforce] LastModifiedDate: ' + date);
+			var label = Ti.UI.createLabel({
+				color: '#366E36',
+				font: { fontSize:15},
+				//shadowColor: '#aaa',
+				//shadowOffset: {x:5, y:5},
+				//shadowRadius: 3,
+				text: date.toLocaleString(),
+				left: 10,
+				touchEnabled: false,
+				//top: 30,
+				width: Ti.UI.SIZE, height: Ti.UI.SIZE
 			});
 			return label;
 		}

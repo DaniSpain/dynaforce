@@ -1,3 +1,4 @@
 "TableView": {
-	top: Alloy.Globals.tableTop
+	top: Alloy.Globals.tableTop,
+	separatorColor: '#0099CC'
 }

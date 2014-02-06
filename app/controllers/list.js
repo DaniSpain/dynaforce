@@ -49,22 +49,27 @@ try {
 	Ti.API.error('[dynaforce] Error queryng ' + sobject + ' data: ' + e);
 }
 
-//var tableData = [];
+var tableData = [];
 
 while (rowset.isValidRow()) {
+	Ti.API.info('[dynaforce] LAST MODIFIED DATE: ' + rowset.getFieldByName('LastModifiedDate'));
 	var row = Ti.UI.createTableViewRow({
-	    className:'forumEvent', // used to improve table performance
-	    selectedBackgroundColor:'white',
+	    className:'listRow', // used to improve table performance on Android
+	    selectedBackgroundColor:'#c6eaf7',
 	    rowId:rowset.fieldByName('Id'), // custom property, useful for determining the row during events
-	    height:Ti.UI.SIZE
+	    //rowId:'Pippo', 
+	    height:Ti.UI.SIZE,
+		backgroundColor: '#ffffff',
+		touchEnabled: true
 	});
 	
 	var view = Titanium.UI.createView({
-	  	left: "10dp",
+	  	left: 0,
 		height: "100dp",
-		width: "280dp",
+		width: Ti.UI.FILL,
 		top: "10dp",
-		layout: 'vertical'
+		layout: 'vertical',
+		touchEnabled: false
 	});
 	
 	for (var i=0; i<fieldList.length; i++) {
@@ -73,9 +78,12 @@ while (rowset.isValidRow()) {
 			view.add(fieldControl);
 	}
 	row.add(view);
-	$.tblView.appendRow(row);
+	tableData.push(row);
+	//$.tblView.appendRow(row);
 	rowset.next();
 }
+
+$.tblView.setData(tableData);
 
 rowset.close();
 
@@ -90,4 +98,12 @@ function closeWindow(e) {
 
 $.list.addEventListener('close', function() {
     $.destroy();
+});
+
+$.tblView.addEventListener('longpress', function(e){
+  alert('Long pressed ' + e.rowData.rowId);
+});
+
+$.tblView.addEventListener('click', function(e){
+  alert('Clicked ' + e.rowData.rowId);
 });

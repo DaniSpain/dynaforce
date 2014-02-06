@@ -14,6 +14,7 @@ Alloy.Globals.force.authorize({
 		
 		Titanium.API.info("Authenticated to salesforce");
 		Alloy.Globals.dynaforce.resetSync();
+		/*
 		$.activityIndicator.setMessage('Sync Layout Configurations');
 		Alloy.Globals.dynaforce.syncListLayoutConf({
 			success: function() {
@@ -36,6 +37,19 @@ Alloy.Globals.force.authorize({
 				});
 			}
 		});
+		*/
+		$.activityIndicator.setMessage('Sync Layout Configurations');
+		Alloy.Globals.dynaforce.syncListLayoutConf({
+			success: function() {
+				$.activityIndicator.setMessage('Sync Data Models');
+				Alloy.Globals.dynaforce.startSync({
+					indicator: $.activityIndicator,
+					success: function() {
+						$.activityIndicator.hide();
+					}
+				});
+			}
+		});
 		//var homeView = Alloy.createController('home').getView();
 		//homeView.open();
 		
@@ -49,14 +63,20 @@ Alloy.Globals.force.authorize({
 });	
 
 function openAccountList() {
+	$.activityIndicator.setMessage('Reading Account Data');
+	$.activityIndicator.show();
 	var listView = Alloy.createController('list', {sobject: 'Account'}).getView();
 	listView.open();
+	$.activityIndicator.hide();
 }
 
 function openContactList() {
+	$.activityIndicator.setMessage('Reading Contact Data');
+	$.activityIndicator.show();
 	//alert('not yet implemented -.-');
 	var listView = Alloy.createController('list', {sobject: 'Contact'}).getView();
 	listView.open();
+	$.activityIndicator.hide();
 }
 
 

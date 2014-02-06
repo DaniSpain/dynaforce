@@ -55,6 +55,7 @@ function Controller() {
     $.__views.__alloyId6.add($.__views.headerTitle);
     $.__views.tblView = Ti.UI.createTableView({
         top: Alloy.Globals.tableTop,
+        separatorColor: "#0099CC",
         id: "tblView"
     });
     $.__views.list.add($.__views.tblView);
@@ -96,32 +97,44 @@ function Controller() {
     } catch (e) {
         Ti.API.error("[dynaforce] Error queryng " + sobject + " data: " + e);
     }
+    var tableData = [];
     while (rowset.isValidRow()) {
+        Ti.API.info("[dynaforce] LAST MODIFIED DATE: " + rowset.getFieldByName("LastModifiedDate"));
         var row = Ti.UI.createTableViewRow({
-            className: "forumEvent",
-            selectedBackgroundColor: "white",
+            className: "listRow",
+            selectedBackgroundColor: "#c6eaf7",
             rowId: rowset.fieldByName("Id"),
-            height: Ti.UI.SIZE
+            height: Ti.UI.SIZE,
+            backgroundColor: "#ffffff",
+            touchEnabled: true
         });
         var view = Titanium.UI.createView({
-            left: "10dp",
+            left: 0,
             height: "100dp",
-            width: "280dp",
+            width: Ti.UI.FILL,
             top: "10dp",
-            layout: "vertical"
+            layout: "vertical",
+            touchEnabled: false
         });
         for (var i = 0; fieldList.length > i; i++) {
             var fieldControl = controlmanager.readableField(fieldList[i], sobject, rowset);
             null != fieldControl && view.add(fieldControl);
         }
         row.add(view);
-        $.tblView.appendRow(row);
+        tableData.push(row);
         rowset.next();
     }
+    $.tblView.setData(tableData);
     rowset.close();
     db.close();
     $.list.addEventListener("close", function() {
         $.destroy();
+    });
+    $.tblView.addEventListener("longpress", function(e) {
+        alert("Long pressed " + e.rowData.rowId);
+    });
+    $.tblView.addEventListener("click", function(e) {
+        alert("Clicked " + e.rowData.rowId);
     });
     __defers["$.__views.backView!click!closeWindow"] && $.__views.backView.addEventListener("click", closeWindow);
     _.extend($, exports);

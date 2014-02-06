@@ -3,16 +3,22 @@ function Controller() {
         $.activityIndicator.show();
     }
     function openAccountList() {
+        $.activityIndicator.setMessage("Reading Account Data");
+        $.activityIndicator.show();
         var listView = Alloy.createController("list", {
             sobject: "Account"
         }).getView();
         listView.open();
+        $.activityIndicator.hide();
     }
     function openContactList() {
+        $.activityIndicator.setMessage("Reading Contact Data");
+        $.activityIndicator.show();
         var listView = Alloy.createController("list", {
             sobject: "Contact"
         }).getView();
         listView.open();
+        $.activityIndicator.hide();
     }
     require("alloy/controllers/BaseController").apply(this, Array.prototype.slice.call(arguments));
     this.__controllerPath = "index";
@@ -71,27 +77,31 @@ function Controller() {
         top: Alloy.Globals.tableTop,
         height: Ti.UI.FILL,
         width: Ti.UI.FILL,
-        backgroundColor: "##33B5E5",
+        backgroundColor: "#33B5E5",
         id: "content"
     });
     $.__views.index.add($.__views.content);
     $.__views.__alloyId3 = Ti.UI.createView({
-        layout: "vertical",
+        layout: "horizontal",
         height: Ti.UI.SIZE,
         width: Ti.UI.SIZE,
+        horizontalWrap: "true",
         id: "__alloyId3"
     });
     $.__views.content.add($.__views.__alloyId3);
     $.__views.__alloyId4 = Ti.UI.createButton({
         color: "#0099CC",
         backgroundColor: "#ffffff",
+        backgroundSelectedColor: "#c6eaf7",
         font: {
             fontFamily: "Helvetica Neue",
             fontSize: 18
         },
         top: 10,
-        width: 200,
-        height: 100,
+        left: 10,
+        borderRadius: Alloy.Globals.buttonRadius,
+        width: Alloy.Globals.buttonSize,
+        height: Alloy.Globals.buttonSize,
         title: "Accounts",
         id: "__alloyId4"
     });
@@ -100,13 +110,16 @@ function Controller() {
     $.__views.__alloyId5 = Ti.UI.createButton({
         color: "#0099CC",
         backgroundColor: "#ffffff",
+        backgroundSelectedColor: "#c6eaf7",
         font: {
             fontFamily: "Helvetica Neue",
             fontSize: 18
         },
         top: 10,
-        width: 200,
-        height: 100,
+        left: 10,
+        borderRadius: Alloy.Globals.buttonRadius,
+        width: Alloy.Globals.buttonSize,
+        height: Alloy.Globals.buttonSize,
         title: "Contacts",
         id: "__alloyId5"
     });
@@ -138,21 +151,11 @@ function Controller() {
             $.activityIndicator.setMessage("Sync Layout Configurations");
             Alloy.Globals.dynaforce.syncListLayoutConf({
                 success: function() {
-                    $.activityIndicator.setMessage("Sync Account Structure & Data");
+                    $.activityIndicator.setMessage("Sync Data Models");
                     Alloy.Globals.dynaforce.startSync({
+                        indicator: $.activityIndicator,
                         success: function() {
-                            Ti.API.info("[dynaforce] Account SYNC SUCCESS");
-                            $.activityIndicator.setMessage("Sync Contact Structure & Data");
-                            try {
-                                Alloy.Globals.dynaforce.startSync({
-                                    success: function() {
-                                        Ti.API.info("[dynaforce] Contact SYNC SUCCESS");
-                                        $.activityIndicator.hide();
-                                    }
-                                });
-                            } catch (e) {
-                                Ti.API.error("[dynaforce] exception in second sync: " + e);
-                            }
+                            $.activityIndicator.hide();
                         }
                     });
                 }
