@@ -29,3 +29,51 @@ exports.getDateTimeObject = function(sfdcDate) {
 	datetime.setSeconds(sec);
 	return datetime;
 };
+
+/**
+ * Creates a date in Salesforce String format (yyyy-mm-ddThh:mm:ssZ)
+ * @returns Strind SFDC dformatted date string
+ */
+
+exports.createTodaySfdcDate = function() {
+	var curdate = new Date();
+
+	var year = curdate.getFullYear();
+	var month = normalizeDateString(curdate.getMonth() + 1);
+	var day = normalizeDateString(curdate.getDate());
+	var hours = normalizeDateString(curdate.getHours());
+	var minutes = normalizeDateString(curdate.getMinutes());
+	var seconds = normalizeDateString(curdate.getSeconds());
+	
+	var utcdate = new Date(Date.UTC(year,month,day));
+	Ti.API.info('[dynaforce] [sfdcDate] Local Hour: ' + curdate.getHours());
+	Ti.API.info('[dynaforce] [sfdcDate] UTC hour: ' + utcdate.getHours());
+	Ti.API.info('[dynaforce] [sfdcDate] UTC: ' + utcdate);
+	Ti.API.info('[dynaforce] [sfdcDate] UTC String: ' + curdate.toUTCString());
+	
+	var datestring = getDateString(curdate);
+	Ti.API.info('[dynaforce] [sfdcDate] Current datetime SFDC format: ' + datestring);
+	return datestring; 
+};
+
+function getDateString(curdate) {
+	var year = curdate.getFullYear();
+	var month = normalizeDateString(curdate.getMonth() + 1);
+	var day = normalizeDateString(curdate.getDate());
+	var hours = normalizeDateString(curdate.getHours());
+	var minutes = normalizeDateString(curdate.getMinutes());
+	var seconds = normalizeDateString(curdate.getSeconds());
+	
+	return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds + 'Z';
+}
+
+/**
+ * Takes the datePart (hour, minutes, secondes, days or months) returns the currect format to 
+ * create the salesforce format, with 2 charachters
+ * This is to avoid the values < 10 (they would be of 1 charachter)
+ * @param int datePart
+ */
+function normalizeDateString(datePart) {
+	return (datePart > 9) ? datePart : '0' + datePart;
+}
+

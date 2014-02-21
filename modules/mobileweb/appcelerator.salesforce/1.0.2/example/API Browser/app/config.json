@@ -1,0 +1,17 @@
+{
+	"global": {
+		"consumerKey" : "<APPLICATION CONSUMER KEY>",
+		"consumerSecret" : "<APPLICATION CONSUMER SECRET",
+		"securityToken" : "<USER SECURITY TOKEN>",
+		"username": "<USERNAME>",
+		"password": "<PASSWORD>"
+	},
+	"env:development": {}, 
+	"env:test": {}, 
+	"env:production": {}, 
+	"os:android": {},
+	"os:blackberry": {},
+	"os:ios": {},
+	"os:mobileweb": {},
+	"dependencies": {}
+}

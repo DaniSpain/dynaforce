@@ -1,0 +1,1698 @@
+<link rel="stylesheet" type="text/css" href="styles.css">
+<div class="apidoc_container apidoc_object">
+
+<div class="page-nav">
+	<ul>
+		<li>
+				<a href="#description">Description</a>
+		</li>
+		<li>
+				<a href="#examples">Examples</a>
+		</li>
+			<li>
+				<a href="#properties">Properties</a>
+			</li>
+			<li>
+				<a href="#methods">Methods</a>
+			</li>
+			<li>
+				<a href="#events">Events</a>
+			</li>
+
+	</ul>
+</div>
+
+
+
+
+<h1 class="namespace">ConnectedApp</h1>
+
+<div class="namespace_type">
+	
+		Object
+</div>
+
+
+<div class="platforms">
+		<span class="android" title="android"></span>
+		<span class="iphone" title="iphone"></span>
+		<span class="ipad" title="ipad"></span>
+
+	<div class="clear"></div>
+
+	<span class="since">
+		<table>
+			<tr>
+				<th>Platform</th>
+				<th>Since</th>
+			</tr>
+				<tr>
+					<td class="name">Android</td>
+					<td class="description">1.0.0</td>
+				</tr>
+				<tr>
+					<td class="name">iPhone</td>
+					<td class="description">1.0.0</td>
+				</tr>
+				<tr>
+					<td class="name">iPad</td>
+					<td class="description">1.0.0</td>
+				</tr>
+		</table>
+	</span>
+</div>
+
+
+
+
+
+
+	<h2 id="description">Description</h2>
+
+	<div class="summary"><p>Represents a Salesforce Connected Application</p></div>
+	<div class="description"><p>A ConnectedApp object gives you access to your Salesforce connected application.
+Create a <code>new</code> ConnectedApp object for each Salesforce Connected Application that you need
+to access in your application.</p></div>
+
+
+    <h2 id="examples">Code Examples</h2>
+
+    <div class="examples">
+            <h4 class="code_example_title">Create a connected app</h4>
+            <div class="code_example"><p>This example demonstrates the creation of a connected app instance.</p>
+<pre><code>var connectedApp = new salesforce.ConnectedApp({
+        consumerKey : &lt;DEVELOPER CONSUMER KEY&gt;,
+        consumerSecret : &lt;DEVELOPER CONSUMER SECRET&gt;
+    });
+</code></pre></div>
+            <h4 class="code_example_title">Login using a custom window and web view</h4>
+            <div class="code_example"><p>This example demonstrates using the user-agent authentication flow with a custom window and webview.</p>
+<pre><code>  var modal = Ti.UI.createWindow({
+      title: 'My Login',
+      width: '100%',
+      height: '100%',
+      barColor: 'green'
+  });
+
+  var closeButton = Ti.UI.createButton({
+      title: 'Close'
+  });
+  closeButton.addEventListener('click', function(){
+      modal.close();
+  });
+  modal.leftNavButton = closeButton;
+
+  var webView = Ti.UI.createWebView({
+      scalesPageToFit: true,
+      showScrollbars: true
+  });
+
+  connectedApp.login({
+      window: modal,
+      webView: webView,
+      success : function(results) {
+          Ti.API.info('Logged in';
+      },
+      error: function(error) {
+          Ti.API.error('ERROR:' + error.message);
+      }
+  });
+</code></pre></div>
+            <h4 class="code_example_title">Get a list of objects</h4>
+            <div class="code_example"><p>This example demonstrates retrieving a list of all SObjects.</p>
+<pre><code>connectedApp.sobjects({
+    success : function(results) {
+        Ti.API.info('Number of objects: ' + results.sobjects.length;
+    },
+    error: function(error) {
+        Ti.API.error('ERROR:' + error.message);
+    }
+});
+</code></pre></div>
+            <h4 class="code_example_title">Create a record</h4>
+            <div class="code_example"><p>This example demonstrates creating a new record.</p>
+<pre><code>connectedApp.create({
+    name: 'Account',
+    data: {
+        Name: 'Express Logistics and Transport'
+    },
+    success: function(results) {
+        Ti.API.info('Record id: ' + results.id;
+    },
+    error: function(error) {
+        Ti.API.error('ERROR:' + error.message);
+    }
+});
+</code></pre></div>
+            <h4 class="code_example_title">Retrieve a record with fields</h4>
+            <div class="code_example"><p>This example demonstrates retrieving a record with fields. Note that if the <code>fields</code> property is not
+ specified it will return all fields for the record.</p>
+<pre><code>connectedApp.retrieve({
+    name: 'Account',
+    id: recordId,
+    fields: [ 'AccountNumber', 'BillingPostalCode' ],
+    success: function(results) {
+        Ti.API.info('AccountNumber: ' + results.AccountNumber);
+        Ti.API.info('BillingPostalCode: ' + results.BillingPostalCode);
+    },
+    error: function(error) {
+        Ti.API.error('ERROR:' + error.message);
+    }
+});
+</code></pre></div>
+            <h4 class="code_example_title">Update a record</h4>
+            <div class="code_example"><p>This example demonstrates updating a record.</p>
+<pre><code>connectedApp.update({
+    name: 'Account',
+    id: recordId,
+    data: {
+        BillingCity: 'San Francisco'
+    },
+    success: function(results) {
+        Ti.API.info('Successfully updated');
+    },
+    error: function(error) {
+        Ti.API.error('ERROR:' + error.message);
+    }
+});
+</code></pre></div>
+            <h4 class="code_example_title">Query records</h4>
+            <div class="code_example"><p>This example demonstrates executing a SOQL query.</p>
+<pre><code>connectedApp.query({
+    name: 'Account',
+    soql: 'SELECT name from Account'
+    success: function(results) {
+        Ti.API.info('Total Size: ' + results.totalSize);
+        Ti.API.info('Number of records: ' + results.records.length);
+    },
+    error: function(error) {
+        Ti.API.error('ERROR:' + error.message);
+    }
+});
+</code></pre></div>
+            <h4 class="code_example_title">Upsert blob data</h4>
+            <div class="code_example"><p>This example demonstrates upserting blob data</p>
+<pre><code>var file = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, 'Default.png');
+blob = file.read();
+
+connectedApp.upsertBlob({
+    name: 'Document',
+    blobField: 'Body',
+    blob: blob,
+    data: {
+        "Name" : "Default image",
+        "FolderId": "00li0000000UAFuAAO",
+        "Type": 'png',
+        "ContentType": blob.mimeType;
+    },
+    success: function(results) {
+        Ti.API.info('id: ' + results.id);
+    },
+    error: function(error) {
+        Ti.API.error('ERROR:' + error.message);
+    },
+    progress: function(e) {
+        Ti.API.info((e * 100) + '%');
+    }
+});
+</code></pre></div>
+            <h4 class="code_example_title">Retrieve blob data</h4>
+            <div class="code_example"><p>This example demonstrates retrieving blob data</p>
+<pre><code>connectedApp.retrieveBlob({
+    name: 'Document',
+    id: recordId,
+    blobField: 'Body',
+    success: function(results) {
+        // results is a Ti.Blob object
+        Ti.API.info('Blob mimetype: ' + results.mimeType);
+        Ti.API.info('Blob size: ' + results.size);
+    },
+    error: function(error) {
+        Ti.API.error('ERROR:' + error.message);
+    },
+    progress: function(e) {
+        Ti.API.info((e * 100) + '%');
+    }
+});
+</code></pre></div>
+    </div>
+
+
+
+
+
+
+
+<h2 id="properties">Properties</h2>
+
+
+	
+<div class="properties">
+
+			
+		    
+			
+			
+			
+			
+				<h3 id="accept">accept : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Format of the result data returned from most requests
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>Specifies the format of the result object returned for most requests. This value can either be
+'application/json' or 'application/xml'.</p>
+<p>The default value is 'application/json'.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="accessToken">accessToken : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Access token that acts as a session ID that the application uses for making requests.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>This token will be set after successful authentication, but can be set by the application
+if the application persists this value and restores it after the application launches.</p>
+<p>This token should be protected as though it were user credentials.</p>
+<p><strong>NOTE: For security reasons, the module does not persist any of the authentication
+information itself. If the application requires persistence of authentication
+information it must do that itself and set the properties on the ConnectedApp
+object.</strong></p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="apiVersion">apiVersion : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Salesforce version to use.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>The default value is 'v26.0'.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="consumerKey">consumerKey : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>The <code>Consumer Key</code> from the connected application definition.
+						</p>
+			
+					
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="consumerSecret">consumerSecret : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>The <code>Consumer Secret</code> from the connected application definition.
+						</p>
+			
+					
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="contentType">contentType : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Format of the data to be sent in most requests
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>Specifies the format of the data property for most requests. This value can either be
+'application/json' or 'application/xml'.</p>
+<p>The default value is 'application/json'.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="currentUser">currentUser : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Currently authenticated user.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>This value will be set after successful authentication, but can be set by the application.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="instanceUrl">instanceUrl : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Identifies the Salesforce instance that API calls should be sent.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>This value will be set after successful authentication, but can be set by the application.</p>
+<p>The default value is 'http://na1.salesforce.com'.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="isLoggedIn">isLoggedIn : Boolean<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Indicates if the user is currently logged in.
+						</p>
+			
+					
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="loginUrl">loginUrl : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Server address to use for authentication.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>When using the user-agent authentication flow (ie. <code>login</code>), the default url is
+'https://login.salesforce.com/services/oauth2/authorize'.</p>
+<p>When using the username-password authentication flow (ie. <code>loginApi</code>), the default url is
+'https://login.salesforce.com/services/oauth2/token'.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="redirectUri">redirectUri : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>The callback url for the connected application definition.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>This property only applies when using the user-agent authentiction flow.</p>
+<p>The default value is 'https://login.salesforce.com/services/oauth2/success'.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="refreshToken">refreshToken : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Token that can be used in the future to obtain new access tokens.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>This token is only applicable when using the user-agent authentication flow (ie. <code>login</code>) AND
+the connected application's OAuth scope includes the use of the refresh_token.</p>
+<p>This token will be set after successful authentication, but can be set by the application
+if the application persists this value and restores it after the application launches.</p>
+<p>This token should be protected as though it were user credentials.</p>
+<p><strong>NOTE: For security reasons, the module does not persist any of the authentication
+information itself. If the application requires persistence of authentication
+information it must do that itself and set the properties on the ConnectedApp
+object.</strong></p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="securityToken">securityToken : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>User's security token
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>A security token is an automatically-generated key from Salesforce.</p>
+<p>The securityToken is required when using the username-password authentication flow (ie. the <code>loginApi</code>)</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="timeout">timeout : Number<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Timeout in milliseconds when the connection should be aborted.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>The default value is 5000.</p></div>
+
+			
+				</div>
+	
+</div>
+
+
+
+
+<h2 id="methods">Methods</h2>
+	
+<div class="methods">
+
+			
+		    
+			
+			
+			
+			
+				<h3 id="create">create</h3>
+			
+				<div>
+					<p>Creates a new record.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="create-object.html"><code>create</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="describe">describe</h3>
+			
+				<div>
+					<p>Completely describes the individual metadata at all levels for the specified object.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="describe-object.html"><code>describe</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="login">login</h3>
+			
+				<div>
+					<p>Login using the user-agent authentication flow.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>Ensure that the <code>consumerKey</code> property of the ConnectedApp object is set
+before calling this method.</p></div>
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="login-object.html"><code>login</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="loginApi">loginApi</h3>
+			
+				<div>
+					<p>Login using the username-password authentication flow.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>Ensure that the <code>consumerKey</code> and <code>consumerSecret</code> properties of the ConnectedApp object are set
+before calling this method. Either set the <code>securityToken</code> property of the ConnectedApp object
+before calling this method or provide the <code>securityToken</code> in the arguments.</p></div>
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="loginApi-object.html"><code>loginApi</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="logout">logout</h3>
+			
+				<div>
+					<p>Logout the current user.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="logout-object.html"><code>logout</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="metadata">metadata</h3>
+			
+				<div>
+					<p>Describes the individual metadata for the specified object.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="metadata-object.html"><code>metadata</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="query">query</h3>
+			
+				<div>
+					<p>Executes the specified SOQL query.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="query-object.html"><code>query</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="refresh">refresh</h3>
+			
+				<div>
+					<p>Request a new access token.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>This method is only applicable when using the user-agent authentication flow (ie. <code>login</code>) AND
+the connected application's OAuth scope includes the use of the refresh_token.</p>
+<p>It is up to the application to determine when an access token is no longer valid, and when to apply for a new one.</p></div>
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="refresh-object.html"><code>refresh</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="remove">remove</h3>
+			
+				<div>
+					<p>Deletes a record based on the specified object ID.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="remove-object.html"><code>remove</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="retrieve">retrieve</h3>
+			
+				<div>
+					<p>Retrieves a record based on the specified object ID.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="retrieve-object.html"><code>retrieve</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="retrieveBlob">retrieveBlob</h3>
+			
+				<div>
+					<p>Retrieves the specified blob field from an individual record.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="retrieveBlob-object.html"><code>retrieveBlob</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="retrieveExternal">retrieveExternal</h3>
+			
+				<div>
+					<p>Retrieves a record with a specific external ID.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="retrieveExternal-object.html"><code>retrieveExternal</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="searchQuery">searchQuery</h3>
+			
+				<div>
+					<p>Executes the specified SOSL search.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="searchQuery-object.html"><code>searchQuery</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="searchScopeOrder">searchScopeOrder</h3>
+			
+				<div>
+					<p>Returns an ordered list of objects in the default global search scope of a logged-in user.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="searchScopeOrder-object.html"><code>searchScopeOrder</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="sobjects">sobjects</h3>
+			
+				<div>
+					<p>Lists the available objects and their metadata for your organization's data.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="sobjects-object.html"><code>sobjects</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="update">update</h3>
+			
+				<div>
+					<p>Updates a record based on the specified object ID.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="update-object.html"><code>update</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="upsertBlob">upsertBlob</h3>
+			
+				<div>
+					<p>Inserts or updates blob data for a record.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="upsertBlob-object.html"><code>upsertBlob</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="upsertExternal">upsertExternal</h3>
+			
+				<div>
+					<p>Creates new records or updates existing records (upserts records) based on the value of a specified external ID field.
+						</p>
+			
+					
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="upsertExternal-object.html"><code>upsertExternal</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+	
+</div>
+
+
+
+<h2 id="events">Events</h2>
+    This type has no events.
+
+
+
+
+</div>

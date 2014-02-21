@@ -1,6 +1,8 @@
+
 $.index.open();
 
 function showIndicator(e){
+	$.activityIndicator.setMessage('Validate User Credentials');
     $.activityIndicator.show();
     // do some work that takes 6 seconds
     // ie. replace the following setTimeout block with your code
@@ -9,43 +11,28 @@ function showIndicator(e){
 Alloy.Globals.dynaforce.init();
 
 
+
 Alloy.Globals.force.authorize({
 	success: function() {
 		
 		Titanium.API.info("Authenticated to salesforce");
 		Alloy.Globals.dynaforce.resetSync();
-		/*
+		
 		$.activityIndicator.setMessage('Sync Layout Configurations');
-		Alloy.Globals.dynaforce.syncListLayoutConf({
-			success: function() {
-				$.activityIndicator.setMessage('Sync Account Structure & Data');
-				Alloy.Globals.dynaforce.startSync({
-					success: function() {
-						Ti.API.info('[dynaforce] Account SYNC SUCCESS');
-						$.activityIndicator.setMessage('Sync Contact Structure & Data');
-						try {
-							Alloy.Globals.dynaforce.startSync({
-								success: function() {
-									Ti.API.info('[dynaforce] Contact SYNC SUCCESS');
-									$.activityIndicator.hide();
-								}
-							});
-						} catch (e) {
-							Ti.API.error('[dynaforce] exception in second sync: ' + e);
-						}
-					}
-				});
-			}
-		});
-		*/
-		$.activityIndicator.setMessage('Sync Layout Configurations');
-		Alloy.Globals.dynaforce.syncListLayoutConf({
+		Alloy.Globals.dynaforce.syncLayoutConf({
+			indicator: $.activityIndicator,
 			success: function() {
 				$.activityIndicator.setMessage('Sync Data Models');
 				Alloy.Globals.dynaforce.startSync({
 					indicator: $.activityIndicator,
 					success: function() {
-						$.activityIndicator.hide();
+						$.activityIndicator.setMessage('Downloading Images');
+						Alloy.Globals.dynaforce.downloadImages({
+							success: function() {
+								$.activityIndicator.hide();
+							}
+						});
+
 					}
 				});
 			}
@@ -54,6 +41,10 @@ Alloy.Globals.force.authorize({
 		//homeView.open();
 		
 	},
+	expired: function() {
+		Ti.API.info('[dynaforce] Session Expired');
+		$.index.close();
+	},
 	error: function() {
 		Ti.API.info('error');
 	},
@@ -61,6 +52,7 @@ Alloy.Globals.force.authorize({
 		Ti.API.info('cancel');
 	}
 });	
+
 
 function openAccountList() {
 	$.activityIndicator.setMessage('Reading Account Data');
@@ -78,6 +70,25 @@ function openContactList() {
 	listView.open();
 	$.activityIndicator.hide();
 }
+
+function openProducts() {
+	$.activityIndicator.setMessage('Reading Products Data');
+	$.activityIndicator.show();
+	//alert('not yet implemented -.-');
+	var listView = Alloy.createController('list', {sobject: 'Product__c'}).getView();
+	listView.open();
+	$.activityIndicator.hide();
+}
+
+function openCatalog() {
+	$.activityIndicator.setMessage('Reading Products Data');
+	$.activityIndicator.show();
+	//alert('not yet implemented -.-');
+	var catalog = Alloy.createController('catalog', {sobject: 'Product__c'}).getView();
+	catalog.open();
+	$.activityIndicator.hide();
+}
+
 
 
 

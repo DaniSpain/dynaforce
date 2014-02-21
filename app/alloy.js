@@ -10,11 +10,21 @@
 //
 // Alloy.Globals.someGlobalFunction = function(){};
 
-var SyncObjects = new Array(
-	"Account"
-);
+
+
 
 Alloy.Globals.force = require('force');
+
+/** Using externa modules **/
+/*
+var salesforce = require('appcelerator.salesforce');
+
+Alloy.Globals.connectedApp = new salesforce.ConnectedApp({
+        consumerKey : Ti.App.Properties.getString('force.consumer.key'),
+        consumerSecret : Ti.App.Properties.getString('force.consumer.secret')
+    });
+  */
+   
 Alloy.Globals.dynaforce = require('dynaforce');
 Alloy.Globals.dbName = "appDb";
 
@@ -47,25 +57,3 @@ if (OS_IOS || OS_ANDROID) {
 		// catch and ignore
 	}
 }
-
-/*
- * creates a map between the SFDC data types and SQLite data types
- * In exception of:
- * 		- reference
- * 		- picklist
- * They are managed 
- */
-Alloy.Globals.SFDCSQLiteFieldMap = {
-	//'id' : 'CHARACTER(20) PRIMARY KEY',
-	'string': 'TEXT',
-	'boolean': 'BOOLEAN',
-	'textarea': 'TEXT',
-	'double': 'DOUBLE',
-	'phone': 'TEXT',
-	'url': 'TEXT',
-	'currency': 'DOUBLE',
-	'int': 'INTEGER',
-	'datetime': 'DATETIME',
-	'date': 'DATE',
-	'picklist': 'TEXT'
-};

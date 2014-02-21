@@ -1,0 +1,22 @@
+<Alloy>
+	<Window navBarHidden="true">
+		<View class="header">
+    	  <View id="backView" onClick="closeWindow">
+	        <ImageView id="backImage"/>
+	      </View>
+	      <Label id="headerTitle">My Accounts</Label>
+	      <!--
+	      <View id="addView">
+	        <ImageView id="addImage"/>
+	      </View>
+	      -->
+	    </View>
+	    
+		<ScrollView layout="vertical" class="content">
+			<View layout="horizontal" horizontalWrap="true" id="container" >
+				
+			</View>
+		</ScrollView>
+        
+	</Window>
+</Alloy>

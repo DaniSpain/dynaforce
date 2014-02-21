@@ -12,9 +12,15 @@ var CONSUMER_KEY = Ti.App.Properties.getString("force.consumer.key");
 
 var CONSUMER_SECRET = Ti.App.Properties.getString("force.consumer.secret");
 
-var REDIRECT_URI = "https://login.salesforce.com/services/oauth2/success";
+var MOD_URL = "https://login.salesforce.com/";
 
-var LOGIN_URL = "https://login.salesforce.com/services/oauth2/authorize?display=touch&response_type=token&client_id=" + Ti.Network.encodeURIComponent(CONSUMER_KEY) + "&redirect_uri=" + REDIRECT_URI;
+var REDIRECT_URI = MOD_URL + "services/oauth2/success";
+
+var MOD = [ "Production/Developer", "Sandbox" ];
+
+var CUR_MOD = 0;
+
+var LOGIN_URL = MOD_URL + "services/oauth2/authorize?display=touch&response_type=token" + "&client_id=" + Ti.Network.encodeURIComponent(CONSUMER_KEY) + "&redirect_uri=" + REDIRECT_URI;
 
 var INSTANCE_URL = Ti.App.Properties.getString("force.instanceURL");
 
@@ -33,13 +39,44 @@ exports.authorize = function(callbacks) {
             backgroundColor: "#ffffff",
             title: "Force.com Login"
         });
-        var webView = Ti.UI.createWebView({
-            top: Alloy.Globals.top,
+        var view = Ti.UI.createView({
             height: Ti.UI.FILL,
+            widht: Ti.UI.FILL,
+            top: Alloy.Globals.top,
+            layout: "vertical"
+        });
+        var webView = Ti.UI.createWebView({
+            height: "85%",
             widht: Ti.UI.FILL,
             url: LOGIN_URL
         });
-        self.add(webView);
+        var btnTitle = "Change to ";
+        btnTitle += 0 == CUR_MOD ? MOD[1] : MOD[0];
+        var modButton = Ti.UI.createButton({
+            width: Ti.UI.FILL,
+            bottom: 0,
+            height: "80dp",
+            title: btnTitle
+        });
+        modButton.addEventListener("click", function() {
+            if (0 == CUR_MOD) {
+                CUR_MOD = 1;
+                MOD_URL = "https://test.salesforce.com/";
+            } else {
+                CUR_MOD = 0;
+                MOD_URL = "https://login.salesforce.com/";
+            }
+            REDIRECT_URI = MOD_URL + "services/oauth2/success";
+            LOGIN_URL = LOGIN_URL = MOD_URL + "services/oauth2/authorize?display=touch&response_type=token" + "&client_id=" + Ti.Network.encodeURIComponent(CONSUMER_KEY) + "&redirect_uri=" + REDIRECT_URI;
+            var btnTitle = "Change to ";
+            btnTitle += 0 == CUR_MOD ? MOD[1] : MOD[0];
+            modButton.setTitle(btnTitle);
+            webView.setUrl(LOGIN_URL);
+            alert("Switched to " + MOD_URL);
+        });
+        view.add(webView);
+        view.add(modButton);
+        self.add(view);
         var ind;
         self.addEventListener("android:back", cancel);
         self.addEventListener("open", function() {
@@ -57,8 +94,16 @@ exports.authorize = function(callbacks) {
         return self;
     }
     if (ACCESS_TOKEN) {
-        info("[Force] ACCESS_TOKEN != null");
-        callbacks && callbacks.success();
+        Ti.API.info("[force] Access Token: " + Ti.Network.encodeURIComponent(ACCESS_TOKEN));
+        exports.request({
+            type: "GET",
+            url: "/query/?q=" + Ti.Network.encodeURIComponent("SELECT Id FROM Account LIMIT 1"),
+            extcallbacks: callbacks,
+            callback: function() {
+                Ti.API.info("[Force] Access Token is still valid");
+                callbacks.success();
+            }
+        });
     } else {
         var authWindow = new AuthorizationWindow();
         authWindow.addEventListener("urlChanged", function(e) {
@@ -71,6 +116,7 @@ exports.authorize = function(callbacks) {
                       case "access_token":
                         ACCESS_TOKEN = Ti.Network.decodeURIComponent(element[1]);
                         Ti.App.Properties.setString("force.accessToken", ACCESS_TOKEN);
+                        Ti.API.info("[force] Access Token: " + ACCESS_TOKEN);
                         break;
 
                       case "refresh_token":
@@ -120,7 +166,13 @@ exports.request = function(opts) {
         if (401 === xhr.status) {
             alert("Session expired - please log in.");
             exports.logout();
-            exports.authorize();
+            opts.extcallbacks.expired();
+            exports.authorize({
+                success: function() {
+                    var indexView = Alloy.createController("index").getView();
+                    indexView.open();
+                }
+            });
         } else {
             opts.onerror && opts.onerror();
             Ti.API.info(xhr.responseText);

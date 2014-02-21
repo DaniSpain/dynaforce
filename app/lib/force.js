@@ -2,8 +2,14 @@
 var API_VERSION = 'v29.0'; //Currently hard-coded to Summer 2012 release
 var CONSUMER_KEY = Ti.App.Properties.getString('force.consumer.key');
 var CONSUMER_SECRET = Ti.App.Properties.getString('force.consumer.secret');
-var REDIRECT_URI = 'https://login.salesforce.com/services/oauth2/success';
-var LOGIN_URL = 'https://login.salesforce.com/services/oauth2/authorize?display=touch&response_type=token'
+var MOD_URL = 'https://login.salesforce.com/';
+var REDIRECT_URI = MOD_URL + 'services/oauth2/success';
+var MOD = [
+	'Production/Developer',
+	'Sandbox'
+];
+var CUR_MOD = 0;
+var LOGIN_URL = MOD_URL + 'services/oauth2/authorize?display=touch&response_type=token'
 	+ '&client_id=' + Ti.Network.encodeURIComponent(CONSUMER_KEY)
 	+ '&redirect_uri=' + REDIRECT_URI;
 
@@ -32,13 +38,66 @@ exports.authorize = function(callbacks) {
 			title:'Force.com Login'
 		});
 		
-		var webView = Ti.UI.createWebView({
-			top: Alloy.Globals.top,
+		var view = Ti.UI.createView({
 			height:Ti.UI.FILL,
+			widht:Ti.UI.FILL,
+			top: Alloy.Globals.top,
+			layout: 'vertical'
+		});
+		
+		var webView = Ti.UI.createWebView({
+			height:"85%",
 			widht:Ti.UI.FILL,
 			url:LOGIN_URL
 		});
-		self.add(webView);
+		
+		var btnTitle = "Change to ";
+		if (CUR_MOD==0) btnTitle += MOD[1];
+		else btnTitle += MOD[0];
+		
+		var modButton = Ti.UI.createButton({
+			width: Ti.UI.FILL,
+			bottom: 0,
+			height: '80dp',
+			title: btnTitle
+		}); 
+		
+				
+				
+		modButton.addEventListener('click',function(e)
+		{
+		   if (CUR_MOD==0) {
+		   	//change to sandbox
+		   		CUR_MOD = 1;
+		   		MOD_URL = 'https://test.salesforce.com/';
+		   }
+		   else {
+		   	//change to prod/developer
+		   		CUR_MOD = 0;
+		   		MOD_URL = 'https://login.salesforce.com/';
+		   }
+		   REDIRECT_URI = MOD_URL + 'services/oauth2/success';
+		   LOGIN_URL = LOGIN_URL = MOD_URL + 'services/oauth2/authorize?display=touch&response_type=token'
+			+ '&client_id=' + Ti.Network.encodeURIComponent(CONSUMER_KEY)
+			+ '&redirect_uri=' + REDIRECT_URI;
+		   
+		   var btnTitle = "Change to ";
+			if (CUR_MOD==0) btnTitle += MOD[1];
+			else btnTitle += MOD[0];
+			
+			modButton.setTitle(btnTitle);
+			
+		   
+		   webView.setUrl(LOGIN_URL);
+		   alert('Switched to ' + MOD_URL);
+		   
+		   //exports.authorize();
+		   //self.close();
+		});
+		
+		view.add(webView);
+		view.add(modButton);
+		self.add(view);
 		
 		//cancel login action
 		function cancel() {
@@ -48,7 +107,6 @@ exports.authorize = function(callbacks) {
 		
 		//instument cancel behavior
 		var ind;
-		
 		if (Ti.Platform.osname !== 'android') {
 			var b = Ti.UI.createButton({
 				title:'Cancel',
@@ -79,18 +137,69 @@ exports.authorize = function(callbacks) {
 		return self;
 	}
 	
-	if (ACCESS_TOKEN) {
+	//if (ACCESS_TOKEN) {
+	/*
+	if (REFRESH_TOKEN) {
 		//TODO: Check if token is still valid - if not, use refresh token if valid.  If not, reauthorize.
-		info('[Force] ACCESS_TOKEN != null');
-		if (callbacks) {
+		info('[Force] REFRESH_TOKEN != null');
+		
+		var xhr=Titanium.Network.createHTTPClient();     
+		
+		xhr.onerror = function(e){ 
+			Ti.API.error(JSON.stringify(e));
+			Ti.API.error(JSON.stringify(this));
+		 Ti.API.error('[Force] Bad Sever => ' + e.error);
+		 Ti.API.error('[Force] Status => ' + this.status);
+		 Ti.API.error('[Force] Response => ' + this.responseText);
+		};
+		
+		//var fullUrl =  INSTANCE_URL + "/services/oauth2/token/";
+		var fullUrl = "https://login.salesforce.com/services/oauth2/token";
+		Ti.API.info('[force] Refresh Token Url: ' + fullUrl);
+		xhr.open("POST",fullUrl);//ADD your  URL
+
+		var param = 'grant_type=refresh_token&client_id=' + escape(CONSUMER_KEY) + 
+			'&client_secret='+ escape(CONSUMER_SECRET) + '&refresh_token=' + escape(REFRESH_TOKEN);
+		 
+		//xhr.validatesSecureCertificate = true;
+		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		xhr.setRequestHeader('Authorization', 'Bearer  ' + ACCESS_TOKEN );
+		//xhr.setRequestHeader('X-User-Agent', 'salesforce-toolkit-rest-javascript/' + API_VERSION);
+		
+		Ti.API.info('[Force] Params: '+ param);
+		xhr.send(param);
+		Ti.API.info('[Force] Request Sent');
+		
+		xhr.onload = function(){
+			Ti.API.info("Received text: " + this.ResponseText);
+			
+		};
+		
+	}
+	*/
+	
+	if (ACCESS_TOKEN) {
+		//doing a dummy request to see if we are authenticated 
+		Ti.API.info('[force] Access Token: ' + Ti.Network.encodeURIComponent(ACCESS_TOKEN));
+		exports.request({
+		type:'GET',
+		url:'/query/?q='+Ti.Network.encodeURIComponent('SELECT Id FROM Account LIMIT 1'), 
+		extcallbacks: callbacks,
+		callback: function(data) {
+			Ti.API.info('[Force] Access Token is still valid');
 			callbacks.success();
 		}
+		});
 	}
+	
 	else {
+		
 		var authWindow = new AuthorizationWindow();
 		
 		authWindow.addEventListener('urlChanged', function(e) {
+			
 			if (e.url.indexOf('/oauth2/success') !== -1) {
+				
 				var hash = e.url.split('#')[1];
 				var elements = hash.split('&');
 				for (var i = 0, l = elements.length; i<l; i++) {
@@ -99,6 +208,7 @@ exports.authorize = function(callbacks) {
 						case 'access_token':
 							ACCESS_TOKEN = Ti.Network.decodeURIComponent(element[1]);
 							Ti.App.Properties.setString('force.accessToken', ACCESS_TOKEN);
+							Ti.API.info('[force] Access Token: ' + ACCESS_TOKEN);
 							break;
 						case 'refresh_token':
 							REFRESH_TOKEN = Ti.Network.decodeURIComponent(element[1]);
@@ -191,7 +301,13 @@ exports.logout = function() {
 		if (xhr.status === 401) {
 			alert('Session expired - please log in.');
 			exports.logout();
-			exports.authorize();
+			opts.extcallbacks.expired();
+			exports.authorize({
+				success: function() {
+					var indexView = Alloy.createController('index').getView();
+					indexView.open();
+				}
+			});
 		}
 		else {
 			opts.onerror && opts.onerror();

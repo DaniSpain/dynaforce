@@ -1,6 +1,6 @@
 <Alloy>
-	<Window onOpen="showIndicator" class="container" navBarHidden="true">
-		
+	<!--<Window onOpen="showIndicator" class="container" navBarHidden="true">-->
+		<Window onOpen="showIndicator" class="container" navBarHidden="true">
 		<View class="header">
 		  
 		  <View class="iconWrap">
@@ -22,6 +22,8 @@
 	        <View layout="horizontal" height="Ti.UI.SIZE" width="Ti.UI.SIZE" horizontalWrap="true">
 				<Button title="Accounts" onClick="openAccountList" />
 		        <Button title="Contacts" onClick="openContactList" />
+		        <Button title="Products" onClick="openProducts" />
+		        <Button title="Catalog" onClick="openCatalog" />
 	        </View>
 	        
 	        <ActivityIndicator id="activityIndicator" />

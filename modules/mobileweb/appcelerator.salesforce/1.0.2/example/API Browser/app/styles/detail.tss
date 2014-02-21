@@ -1,0 +1,56 @@
+"Window": {
+	backgroundColor: "white",
+	layout: "vertical"
+},
+"Label": {
+	font: {
+		fontSize: "16dp",
+		fontWeight: "bold"
+	}
+},
+".section": {
+	width: "100%",
+	textAlign: "left"
+},
+"#resultsView": {
+	layout: "vertical",
+	height: "70%",
+	width: "100%"
+},
+"#metaView": {
+	layout: "vertical",
+	height: "30%",
+	width: "100%"
+},
+"#resultsScroll": {
+	contentWidth: 'auto',
+	contentHeight: 'auto',
+	showVerticalScrollIndicator: true,
+	borderColor: 'lightgray'
+},
+"#resultsTextArea": {
+	backgroundColor: '#E0E0E0',
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL,
+	textAlign: 'left',
+	editable: false,
+	focusable: true,
+	borderWidth: 0,
+	color: 'black'
+},
+"#metaScroll": {
+	contentWidth: 'auto',
+	contentHeight: 'auto',
+	showVerticalScrollIndicator: true,
+	borderColor: 'lightgray'
+},
+"#metaTextArea": {
+	backgroundColor: '#E0E0E0',
+	width: Ti.UI.FILL,
+	height: Ti.UI.FILL,
+	textAlign: 'left',
+	editable: false,
+	focusable: true,
+	borderWidth: 0,
+	color: 'black'
+}

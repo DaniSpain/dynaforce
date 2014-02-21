@@ -1,0 +1,20 @@
+<Alloy>
+	<Window navBarHidden="true">
+		<View class="header">
+    	  <View id="backView" onClick="closeWindow">
+	        <ImageView id="backImage"/>
+	      </View>
+	      <Label id="headerTitle">Catalog</Label>
+	      <!--
+	      <View id="addView">
+	        <ImageView id="addImage"/>
+	      </View>
+	      -->
+	    </View>
+	    
+		<ScrollView layout="horizontal" class="content" id="scroller">
+			
+		</ScrollView>
+        
+	</Window>
+</Alloy>

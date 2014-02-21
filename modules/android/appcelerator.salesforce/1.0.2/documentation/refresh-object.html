@@ -1,0 +1,268 @@
+<link rel="stylesheet" type="text/css" href="styles.css">
+<div class="apidoc_container apidoc_object">
+
+<div class="page-nav">
+	<ul>
+		<li>
+				Description
+		</li>
+		<li>
+				Examples
+		</li>
+			<li>
+				<a href="#properties">Properties</a>
+			</li>
+			<li>
+				<a href="#methods">Methods</a>
+			</li>
+			<li>
+				<a href="#events">Events</a>
+			</li>
+
+	</ul>
+</div>
+
+
+
+
+<h1 class="namespace">refresh</h1>
+
+<div class="namespace_type">
+	
+		Object
+</div>
+
+
+<div class="platforms">
+		<span class="android" title="android"></span>
+		<span class="iphone" title="iphone"></span>
+		<span class="ipad" title="ipad"></span>
+
+	<div class="clear"></div>
+
+	<span class="since">
+		<table>
+			<tr>
+				<th>Platform</th>
+				<th>Since</th>
+			</tr>
+				<tr>
+					<td class="name">Android</td>
+					<td class="description">1.0.0</td>
+				</tr>
+				<tr>
+					<td class="name">iPhone</td>
+					<td class="description">1.0.0</td>
+				</tr>
+				<tr>
+					<td class="name">iPad</td>
+					<td class="description">1.0.0</td>
+				</tr>
+		</table>
+	</span>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="properties">Properties</h2>
+
+
+	
+<div class="properties">
+
+			
+		    
+			
+			
+			
+			
+				<h3 id="accept">accept : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Format of the result data returned from the request
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>The <code>accept</code> property of the <a href="ConnectedApp-object.html">ConnectedApp</a> object is used on most requests, but can
+be overridden for individual requests by including this property. This value can either be
+'application/json' or 'application/xml'. This value determines the type of the result object passed as the first parameter
+of the <code>success</code> callback.</p>
+<p>This property is optional.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="beforeSend">beforeSend : Callback&lt;<a href="http://docs.appcelerator.com/titanium/latest/#!/api/Titanium.Network.HTTPClient-object.html"><code>Ti.Network.HTTPClient</code></a>&gt;<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Callback function to be called just before sending the request.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>The parameter passed to this callback is the <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Titanium.Network.HTTPClient-object.html">Ti.Network.HTTPClient</a>
+object for the request that is about to be sent.</p>
+<p>This property is optional.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="contentType">contentType : String<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Format of the data to be sent in the request
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>The <code>contentType</code> property of the <a href="ConnectedApp-object.html">ConnectedApp</a> object is used on most requests, but can
+be overridden for individual requests by including this property. This value can either be
+'application/json' or 'application/xml'. This value determines the expected type of the <code>data</code> property
+that is specified in the arguments passed to most methods.</p>
+<p>This property is optional.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="error">error : Callback<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Callback function to be called when the operation fails to complete.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>This callback function receives both the error and request metadata as parameters.</p>
+<p>The first parameter to this callback is the <a href="errorDetails-object.html">error details</a> dictionary.</p>
+<p>The second parameter to this callback is the <a href="requestMetadata-object.html">request metadata</a> dictionary.
+This parameter is optional and is provided for informational purposes.</p>
+<p>This property is optional.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="progress">progress : Callback&lt;<code>Number</code>&gt;<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Callback function to be called at regular intervals as the request data is being transmitted.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>This parameter passed to this callback is a value that ranges from 0.0 to 1.0.</p>
+<p>This property is optional.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="success">success : Callback<!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Callback function to be called when the operation completes successfully.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>This callback function receives both the response and request metadata as parameters.</p>
+<p>The first parameter to this callback is the response from Salesforce. The value of the
+response varies based on the method that is executed. Refer to the
+<a href="http://www.salesforce.com/us/developer/docs/api_rest/index.htm">Force.com REST API</a>
+documentation for details on the expected response.
+The type of this object will depend on the <code>accept</code> data format property. It will be a Javascript dictionary object if 'application/json' was
+specified or it will be a Ti.XML.Document object if 'application/xml' was specified.
+Note that for the <code>login</code>, <code>loginAPI</code>, and <code>refresh</code> methods the type of this object will
+always be a Javascript dictionary object. For the <code>retrieveBlob</code> method the type of this object
+will be a Ti.Blob object.</p>
+<p>The second parameter to this callback is the <a href="requestMetadata-object.html">request metadata</a> dictionary.
+This parameter is optional and is provided for informational purposes.</p>
+<p>This property is optional.</p></div>
+
+			
+				</div>
+			
+		    
+			
+			
+			
+			
+				<h3 id="timeout">timeout : <!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Timeout in milliseconds when the connection should be aborted.
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>The <code>timeout</code> property of the <a href="ConnectedApp-object.html">ConnectedApp</a> object is used on every request, but can
+be overridden for individual requests by including this property.</p>
+<p>This property is optional.</p></div>
+
+			
+				</div>
+	
+</div>
+
+
+
+
+<h2 id="methods">Methods</h2>
+	This type has no methods.
+
+<h2 id="events">Events</h2>
+    This type has no events.
+
+
+
+
+</div>

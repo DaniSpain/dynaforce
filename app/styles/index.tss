@@ -5,15 +5,7 @@
 	color: "#000"
 } 
 
-"#activityIndicator": {
-	color: '#ffffff',
-  	font: {fontFamily:'Helvetica Neue', fontSize:16, fontWeight:'bold'},
-  	style: Alloy.Globals.style,
-  	top: 0,
-  	backgroundColor: '#0099CC',
-  	height:Ti.UI.FILL,
-  	width:Ti.UI.FILL,
-}
+
 
 "Button": {
 	color: '#0099CC',

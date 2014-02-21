@@ -1,0 +1,9 @@
+<Alloy>
+	<Window title="salesforce">
+		<TableView id="table" onClick="openDetail">
+			<HeaderView platform="android">
+				<Label id="header">salesforce</Label>
+			</HeaderView>
+		</TableView>
+	</Window>
+</Alloy>

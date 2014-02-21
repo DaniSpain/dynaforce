@@ -1,0 +1,374 @@
+<link rel="stylesheet" type="text/css" href="styles.css">
+<div class="apidoc_container apidoc_module">
+
+<div class="page-nav">
+	<ul>
+		<li>
+				<a href="#description">Description</a>
+		</li>
+		<li>
+				<a href="#examples">Examples</a>
+		</li>
+				<li>
+					Objects
+				</li>
+			<li>
+				<a href="#properties">Properties</a>
+			</li>
+			<li>
+				<a href="#methods">Methods</a>
+			</li>
+			<li>
+				<a href="#events">Events</a>
+			</li>
+
+	</ul>
+</div>
+
+
+
+
+<h1 class="namespace">Modules.appcelerator.salesforce</h1>
+
+<div class="namespace_type">
+	Module
+</div>
+
+
+<div class="platforms">
+		<span class="android" title="android"></span>
+		<span class="iphone" title="iphone"></span>
+		<span class="ipad" title="ipad"></span>
+
+	<div class="clear"></div>
+
+	<span class="since">
+		<table>
+			<tr>
+				<th>Platform</th>
+				<th>Since</th>
+			</tr>
+				<tr>
+					<td class="name">Android</td>
+					<td class="description">1.0.0</td>
+				</tr>
+				<tr>
+					<td class="name">iPhone</td>
+					<td class="description">1.0.0</td>
+				</tr>
+				<tr>
+					<td class="name">iPad</td>
+					<td class="description">1.0.0</td>
+				</tr>
+		</table>
+	</span>
+</div>
+
+
+
+
+
+
+	<h2 id="description">Description</h2>
+
+	<div class="summary"><p>Allows Titanium client applications to access Salesforce.</p></div>
+	<div class="description"><p>This module provides access to the Salesforce Force.com APIs.</p>
+<h3>Salesforce Resources</h3>
+<ul>
+<li><a href="http://events.developerforce.com/signup">developerforce signup</a></li>
+<li><a href="http://developerforce.com">developerforce</a></li>
+<li><a href="http://www.salesforce.com/us/developer/docs/api_rest/index.htm">Force.com REST API</a></li>
+<li><a href="http://www.salesforce.com/us/developer/docs/api_rest/Content/intro_understanding_authentication.htm">Understanding Authentication</a></li>
+<li><a href="http://www.salesforce.com/us/developer/docs/api/Content/sforce_api_concepts_security.htm">Security and the API</a></li>
+</ul>
+<h3>Requirements</h3>
+<ul>
+<li>Obtain your <a href="https://events.developerforce.com/signup">Salesforce Developer instance</a> from the Salesforce Platform</li>
+</ul>
+<h3>Create a Connected App on Salesforce</h3>
+<p>You must first configure your application on the Salesforce platform and retrieve your consumer key and consumer secret.
+The following instructions provide steps to set up a Connected App. Please refer to the Salesforce web site for the latest
+instructions.</p>
+<ol>
+<li>Login to your developer account</li>
+<li>Navigate to the 'Setup' page</li>
+<li>On the left menu, select 'Build', 'Create', and then 'Apps'</li>
+<li>In the "Connected Apps" section, click 'New' to create a new connected app.</li>
+<li>Fill in the required fields</li>
+<li>Click 'Enable OAuth Settings' and fill in the required fields. For the 'Callback URL' you can specify the default URL of 'https://login.salesforce.com/services/oauth2/success'.</li>
+<li>Click 'Save'</li>
+<li>Note your application's consumer key, consumer secret, and callback URL</li>
+</ol>
+<h3>Authentication</h3>
+<p>Your application can be configured to use one of two OAuth 2.0 <a href="http://www.salesforce.com/us/developer/docs/api_rest/Content/intro_understanding_authentication.htm">authentication flows</a>.</p>
+<p>When using the 'Username-password flow' each user must provide their security token when calling <a href="ConnectedApp-object.html">loginApi</a>.
+Users can obtain their security token by changing their password or resetting their security token via the Salesforce user interface.
+When a user changes their password or resets their security token, Salesforce sends a new security token to the email address on the
+user's Salesforce record. The security token is valid until a user resets their security token, changes their password, or has their password reset.
+For more information on security tokens see "Resetting Your Security Token" in the Salesforce online help. Refer to <a href="http://www.salesforce.com/us/developer/docs/api/Content/sforce_api_concepts_security.htm">Security and the API</a>
+document for further details.</p>
+<p>When using the 'User-agent flow' the security token is not required and the Salesforce web server will provide the required authentication support.</p>
+<h3>Getting Started</h3>
+<ul>
+<li>View the <a href="http://docs.appcelerator.com/titanium/latest/#!/guide/Using_Titanium_Modules">Using Titanium Modules</a>
+    document for instructions on getting started with using this module in your application.</li>
+</ul>
+<h3>Accessing the Module</h3>
+<ul>
+<li>
+<p>Use <code>require</code> to access this module from JavaScript:</p>
+<pre><code>var salesforce = require("appcelerator.salesforce");
+</code></pre>
+<p>The <code>salesforce</code> variable is a reference to the Module object.</p>
+</li>
+</ul>
+<h3>Connected App</h3>
+<p>Access to each of your connected app's is done via an instance of a <a href="ConnectedApp-object.html">ConnectedApp</a> object. When creating an new instance of a
+ConnectedApp</p>
+<ol>
+<li>
+<p>Require the module</p>
+<pre><code>var salesforce = require('appcelerator.salesforce');
+</code></pre>
+</li>
+<li>
+<p>Create a 'connected app' object for each salesforce app instance</p>
+<pre><code>var connectedApp = new salesforce.ConnectedApp({
+        consumerKey : &lt;DEVELOPER CONSUMER KEY&gt;,
+        consumerSecret : &lt;DEVELOPER CONSUMER SECRET&gt;
+    });
+</code></pre>
+</li>
+<li>
+<p>Login using either the username-password (API) or user-agent flow (web page)</p>
+<pre><code>connectedApp.securityToken = &lt;SECURITY TOKEN&gt;;
+connectedApp.loginApi({
+    username : &lt;USERNAME&gt;,
+    password : &lt;PASSWORD&gt;,
+    success : function(e, meta) {...},
+    error : function(e, meta) {...}
+});
+</code></pre>
+<p>-or-</p>
+<pre><code>connectedApp.login({
+    success : function(e, meta) {...},
+    error : function(e, meta) {...}
+});
+</code></pre>
+</li>
+</ol>
+<p>All of the exposed methods accept a dictionary of properties as their only argument.
+Refer to the <a href="ConnectedApp-object.html">ConnectedApp</a> documentation for details about each method.</p>
+<p><strong>NOTE: For security reasons, the module does not persist any of the authentication
+information itself. If the application requires persistence of authentication
+information it must do that itself and set the properties on the ConnectedApp
+object.</strong></p>
+<h3>Common argument properties</h3>
+<p>Every method allows for the definition of several <a href="commonArgs-object.html">optional callback properties</a> in the
+dictionary argument that is passed to the each method. Normally you will define both a <code>success</code> and an
+<code>error</code> callback so your application can handle the result of the method call.</p>
+<p>Review the <a href="commonArgs-object.html">optional callback properties</a> documentation for details.</p>
+<h3>JSON and XML support</h3>
+<p>The module supports both JSON and XML data format. JSON is the default. The format to use can be controlled by either setting the <code>contentType</code> and <code>accept</code> properties
+of the <a href="ConnectedApp-object.html">ConnectedApp</a> object or by setting the <code>contentType</code> and <code>accept</code> properties in the arguments passed to each method. The exceptions to this
+are the <code>login</code>, <code>loginApi</code>, and <code>refresh</code> methods. Those methods always return JSON results.</p>
+<p>For example, to set XML as the default format for all of the methods you could set the properties on the ConnectedApp object:</p>
+<pre><code>    connectedApp.contentType = 'application/xml';
+    connectedApp.accept = 'application/xml';
+</code></pre>
+<p>Again, the default is JSON, but if you want to explicitly set the format on the ConnectedApp object:</p>
+<pre><code>    connectedApp.contentType = 'application/json';
+    connectedApp.accept = 'application/json';
+</code></pre>
+<p>The <code>API Browser</code> example application has code that supports both formats.</p>
+<h3>Example applications</h3>
+<p>Example applications are located in the <code>example</code> folder of the module.</p>
+<h2>Authors</h2>
+<p>Jeff English, Rick Blalock, Bert Grantges</p>
+<h2>Module History</h2>
+<p>View the <a href="changelog.html">change log</a> for this module.</p>
+<h2>Feedback and Support</h2>
+<p>Please direct all questions, feedback, and concerns to <a href="mailto:info@appcelerator.com?subject=appcelerator.salesforce%20Module">info@appcelerator.com</a>.</p>
+<h2>License</h2>
+<p>Copyright(c) 2011-2013 by Appcelerator, Inc. All Rights Reserved. Please see the LICENSE file included in the distribution for further details.</p></div>
+
+
+    <h2 id="examples">Code Examples</h2>
+
+    <div class="examples">
+            <h4 class="code_example_title">Create a connected app</h4>
+            <div class="code_example"><p>This example demonstrates the creation of a connected app instance.</p>
+<pre><code>var connectedApp = new salesforce.ConnectedApp({
+        consumerKey : &lt;DEVELOPER CONSUMER KEY&gt;,
+        consumerSecret : &lt;DEVELOPER CONSUMER SECRET&gt;
+    });
+</code></pre></div>
+            <h4 class="code_example_title">Login using the username-password workflow</h4>
+            <div class="code_example"><p>This example demonstrates logging in with a username and password.</p>
+<pre><code>connectedApp.securityToken = &lt;SECURITY TOKEN&gt;;
+connectedApp.loginApi({
+    username : &lt;USERNAME&gt;,
+    password : &lt;PASSWORD&gt;,
+    success : function(results, meta) {...},
+    error : function(results, meta) {...}
+});
+</code></pre></div>
+            <h4 class="code_example_title">Login using the user-agent workflow</h4>
+            <div class="code_example"><p>This example demonstrates logging in with the Salesforce user-agent.</p>
+<pre><code>connectedApp.login({
+    success : function(results, meta) {...},
+    error : function(results, meta) {...}
+});
+</code></pre></div>
+            <h4 class="code_example_title">Retrieve available versions</h4>
+            <div class="code_example"><p>This example demonstrates retrieving the available Salesforce versions.</p>
+<pre><code>salesforce.versions({
+    success : function(results, meta) {...},
+    error : function(results, meta) {...}
+});
+</code></pre></div>
+            <h4 class="code_example_title">Example of callbacks</h4>
+            <div class="code_example"><p>The following example demonstrates the definition of all of the supported callbacks
+available on every method call. All of the callbacks are optional.</p>
+<pre><code>salesforce.versions({
+    success: function(results, meta) {
+        Ti.API.info('Number of versions: ' + results.length);
+        Ti.API.info(JSON.stringify(results);
+
+        Ti.API.info('Request time: ' + meta.time);
+    },
+    error: function(error, meta) {
+        Ti.API.error('ERROR:' + error.message);
+    },
+    progress: function(percent) {
+        Ti.API.info('Percent complete: ' + (percent * 100) + '%');
+    },
+    beforeSend: function(xhr) {
+        Ti.API.info('About to send request');
+    }
+});
+</code></pre></div>
+    </div>
+
+
+
+
+
+
+
+<h2 id="properties">Properties</h2>
+
+
+	
+<div class="properties">
+
+			
+		    
+			
+			
+			
+			
+				<h3 id="ConnectedApp">ConnectedApp : <a href="ConnectedApp-object.html"><code>ConnectedApp</code></a><!-- Will add </h3> later -->
+			
+				</h3>
+				<div>
+					<p>Class used to represent a Salesforce Connected Application instance
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>Create an instance of this class for each salesforce instance that you need
+to reference in your application. Use the <code>new</code> operator to construct a new
+object of this type.</p></div>
+
+			
+				</div>
+	
+</div>
+
+
+
+
+<h2 id="methods">Methods</h2>
+	
+<div class="methods">
+
+			
+		    
+			
+			
+			
+			
+				<h3 id="versions">versions</h3>
+			
+				<div>
+					<p>Retrieve available version information from Salesforce
+						</p>
+			
+					
+	<h4 id="member_description">Description</h4>
+
+	<div class="description"><p>Lists summary information about each Salesforce version currently available,
+including the version, label, and a link to each version's root.</p></div>
+
+			
+						
+<div class="apidoc_container apidoc_method">
+<ul>
+	
+	<li>
+		<h4 id="arguments">Parameters</h4>
+		
+<div class="arguments">
+
+		<ul>
+			<li>
+			
+		    
+			
+			
+			
+			
+				<h5>args : <a href="http://docs.appcelerator.com/titanium/latest/#!/api/Dictionary-object.html">Dictionary</a>&lt;<a href="versionsArgs-object.html"><code>versionsArgs</code></a>&gt;<!-- Will add </h5> later -->
+			
+				</h5>
+				<div>
+					<p>A dictionary of properties for the operation.
+						</p>
+			
+					
+
+			
+				</div>
+			</li>
+		</ul>
+	
+</div>
+
+
+	</li>
+
+
+	<li>
+		<h4>Returns</h4>
+		<div class="return_type">
+		        void
+		</div>
+	</li>
+<ul>
+</div>
+
+				</div>
+	
+</div>
+
+
+
+<h2 id="events">Events</h2>
+    This type has no events.
+
+
+
+
+</div>

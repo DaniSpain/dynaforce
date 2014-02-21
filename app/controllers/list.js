@@ -7,8 +7,6 @@ var sobject = args['sobject'];
 Ti.API.info('[dynaforce] PASSED SOBJECT: ' + sobject);
 
 
-$.list.open();
-
 
 var db = Ti.Database.open(Alloy.Globals.dbName);
 
@@ -29,6 +27,7 @@ while (fieldset.isValidRow()) {
 	Ti.API.info('[dynaforce] LIST LAYOUT ROW[' + row + '] POSITION: ' + fieldset.fieldByName('position'));
 	Ti.API.info('[dynaforce] LIST LAYOUT ROW[' + row + '] FIELD: ' + fieldset.fieldByName('field'));
 	Ti.API.info('[dynaforce] LIST LAYOUT ROW[' + row + '] SOBJECT: ' + fieldset.fieldByName('sobject'));
+	Ti.API.info('[dynaforce] LIST LAYOUT ROW[' + row + '] RENDERING: ' + fieldset.fieldByName('rendering'));
 	row++;
 	var fieldName = fieldset.fieldByName('field');
 	fieldList.push(fieldName);
@@ -52,7 +51,7 @@ try {
 var tableData = [];
 
 while (rowset.isValidRow()) {
-	Ti.API.info('[dynaforce] LAST MODIFIED DATE: ' + rowset.getFieldByName('LastModifiedDate'));
+	//Ti.API.info('[dynaforce] LAST MODIFIED DATE: ' + rowset.getFieldByName('LastModifiedDate'));
 	var row = Ti.UI.createTableViewRow({
 	    className:'listRow', // used to improve table performance on Android
 	    selectedBackgroundColor:'#c6eaf7',
@@ -73,7 +72,7 @@ while (rowset.isValidRow()) {
 	});
 	
 	for (var i=0; i<fieldList.length; i++) {
-		var fieldControl = controlmanager.readableField(fieldList[i], sobject, rowset);
+		var fieldControl = controlmanager.readableField(fieldList[i], sobject, rowset, false, Alloy.Globals.dynaforce.LIST_LAYOUT_TABLE);
 		if (fieldControl!=null)
 			view.add(fieldControl);
 	}
@@ -91,6 +90,7 @@ rowset.close();
 
 db.close();
 
+$.list.open();
 
 function closeWindow(e) {
 	$.list.close();
@@ -105,5 +105,7 @@ $.tblView.addEventListener('longpress', function(e){
 });
 
 $.tblView.addEventListener('click', function(e){
-  alert('Clicked ' + e.rowData.rowId);
+  	//alert('Clicked ' + e.rowData.rowId);
+  	var detailView = Alloy.createController('detail', {sobject: sobject, id: e.rowData.rowId}).getView();
+	detailView.open();
 });

@@ -16,14 +16,14 @@ function Controller() {
         id: "list"
     });
     $.__views.list && $.addTopLevelView($.__views.list);
-    $.__views.__alloyId6 = Ti.UI.createView({
+    $.__views.__alloyId11 = Ti.UI.createView({
         top: Alloy.Globals.top,
         height: "50dp",
         width: Ti.UI.FILL,
         backgroundColor: "#ff8a00",
-        id: "__alloyId6"
+        id: "__alloyId11"
     });
-    $.__views.list.add($.__views.__alloyId6);
+    $.__views.list.add($.__views.__alloyId11);
     $.__views.backView = Ti.UI.createView({
         top: 0,
         bottom: 0,
@@ -31,7 +31,7 @@ function Controller() {
         width: "50dp",
         id: "backView"
     });
-    $.__views.__alloyId6.add($.__views.backView);
+    $.__views.__alloyId11.add($.__views.backView);
     closeWindow ? $.__views.backView.addEventListener("click", closeWindow) : __defers["$.__views.backView!click!closeWindow"] = true;
     $.__views.backImage = Ti.UI.createImageView({
         height: Ti.UI.FILL,
@@ -52,7 +52,7 @@ function Controller() {
         text: "My Accounts",
         id: "headerTitle"
     });
-    $.__views.__alloyId6.add($.__views.headerTitle);
+    $.__views.__alloyId11.add($.__views.headerTitle);
     $.__views.tblView = Ti.UI.createTableView({
         top: Alloy.Globals.tableTop,
         separatorColor: "#0099CC",
@@ -64,7 +64,6 @@ function Controller() {
     var args = arguments[0] || {};
     var sobject = args["sobject"];
     Ti.API.info("[dynaforce] PASSED SOBJECT: " + sobject);
-    $.list.open();
     var db = Ti.Database.open(Alloy.Globals.dbName);
     Ti.API.info("[dynaforce] Fetching list fields");
     try {
@@ -79,6 +78,7 @@ function Controller() {
         Ti.API.info("[dynaforce] LIST LAYOUT ROW[" + row + "] POSITION: " + fieldset.fieldByName("position"));
         Ti.API.info("[dynaforce] LIST LAYOUT ROW[" + row + "] FIELD: " + fieldset.fieldByName("field"));
         Ti.API.info("[dynaforce] LIST LAYOUT ROW[" + row + "] SOBJECT: " + fieldset.fieldByName("sobject"));
+        Ti.API.info("[dynaforce] LIST LAYOUT ROW[" + row + "] RENDERING: " + fieldset.fieldByName("rendering"));
         row++;
         var fieldName = fieldset.fieldByName("field");
         fieldList.push(fieldName);
@@ -99,7 +99,6 @@ function Controller() {
     }
     var tableData = [];
     while (rowset.isValidRow()) {
-        Ti.API.info("[dynaforce] LAST MODIFIED DATE: " + rowset.getFieldByName("LastModifiedDate"));
         var row = Ti.UI.createTableViewRow({
             className: "listRow",
             selectedBackgroundColor: "#c6eaf7",
@@ -117,7 +116,7 @@ function Controller() {
             touchEnabled: false
         });
         for (var i = 0; fieldList.length > i; i++) {
-            var fieldControl = controlmanager.readableField(fieldList[i], sobject, rowset);
+            var fieldControl = controlmanager.readableField(fieldList[i], sobject, rowset, false, Alloy.Globals.dynaforce.LIST_LAYOUT_TABLE);
             null != fieldControl && view.add(fieldControl);
         }
         row.add(view);
@@ -127,6 +126,7 @@ function Controller() {
     $.tblView.setData(tableData);
     rowset.close();
     db.close();
+    $.list.open();
     $.list.addEventListener("close", function() {
         $.destroy();
     });
@@ -134,7 +134,11 @@ function Controller() {
         alert("Long pressed " + e.rowData.rowId);
     });
     $.tblView.addEventListener("click", function(e) {
-        alert("Clicked " + e.rowData.rowId);
+        var detailView = Alloy.createController("detail", {
+            sobject: sobject,
+            id: e.rowData.rowId
+        }).getView();
+        detailView.open();
     });
     __defers["$.__views.backView!click!closeWindow"] && $.__views.backView.addEventListener("click", closeWindow);
     _.extend($, exports);

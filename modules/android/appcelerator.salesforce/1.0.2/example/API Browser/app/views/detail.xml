@@ -1,0 +1,17 @@
+<Alloy>
+	<Window>
+		<!--Label id="title" platform="android"/-->
+		<View id="resultsView">
+			<Label class="section">Request Results</Label>
+			<ScrollView id="resultsScroll">
+				<TextArea id="resultsTextArea"/>
+			</ScrollView>
+		</View>
+		<View id="metaView">
+			<Label class="section">Request Metadata</Label> 
+			<ScrollView id="metaScroll">
+				<TextArea id="metaTextArea"/>
+			</ScrollView>
+		</View>
+	</Window>
+</Alloy>

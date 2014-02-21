@@ -1,0 +1,9 @@
+{
+    "description": "Appcelerator Salesforce", 
+    "directories": {
+        "lib": "./src"
+    }, 
+    "main": "appcelerator.salesforce", 
+    "name": "appcelerator.salesforce", 
+    "version": "1.0.2"
+}
