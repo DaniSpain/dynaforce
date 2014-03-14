@@ -32,7 +32,7 @@ exports.getDateTimeObject = function(sfdcDate) {
 
 /**
  * Creates a date in Salesforce String format (yyyy-mm-ddThh:mm:ssZ)
- * @returns Strind SFDC dformatted date string
+ * @returns String SFDC dformatted date string
  */
 
 exports.createTodaySfdcDate = function() {
@@ -45,12 +45,16 @@ exports.createTodaySfdcDate = function() {
 	var minutes = normalizeDateString(curdate.getMinutes());
 	var seconds = normalizeDateString(curdate.getSeconds());
 	
+	/*
 	var utcdate = new Date(Date.UTC(year,month,day));
 	Ti.API.info('[dynaforce] [sfdcDate] Local Hour: ' + curdate.getHours());
 	Ti.API.info('[dynaforce] [sfdcDate] UTC hour: ' + utcdate.getHours());
 	Ti.API.info('[dynaforce] [sfdcDate] UTC: ' + utcdate);
+	*/
 	Ti.API.info('[dynaforce] [sfdcDate] UTC String: ' + curdate.toUTCString());
-	
+	var UTCHours = curdate.toUTCString().substring(17,19);
+	Ti.API.info('[dynaforce] [sfdcDate] UTC hours: ' + UTCHours);
+	curdate.setHours(UTCHours);
 	var datestring = getDateString(curdate);
 	Ti.API.info('[dynaforce] [sfdcDate] Current datetime SFDC format: ' + datestring);
 	return datestring; 

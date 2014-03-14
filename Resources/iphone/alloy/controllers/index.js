@@ -197,6 +197,7 @@ function Controller() {
     $.__views.content.add($.__views.activityIndicator);
     exports.destroy = function() {};
     _.extend($, $.__views);
+    $.index.open();
     Alloy.Globals.dynaforce.init();
     Alloy.Globals.force.authorize({
         success: function() {
@@ -232,7 +233,6 @@ function Controller() {
             Ti.API.info("cancel");
         }
     });
-    $.index.open();
     __defers["$.__views.index!open!showIndicator"] && $.__views.index.addEventListener("open", showIndicator);
     __defers["$.__views.__alloyId7!click!openAccountList"] && $.__views.__alloyId7.addEventListener("click", openAccountList);
     __defers["$.__views.__alloyId8!click!openContactList"] && $.__views.__alloyId8.addEventListener("click", openContactList);

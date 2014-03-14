@@ -405,11 +405,11 @@ exports.startSync = function(callbacks) {
 
 exports.downloadImages = function(callbacks) {
     retrieveImageList(exports.LIST_LAYOUT_TABLE);
-    exports.startDownloadRoutine({
+    JSONImages.length > 0 ? exports.startDownloadRoutine({
         success: function() {
             callbacks.success();
         }
-    });
+    }) : callbacks.success();
 };
 
 exports.startDownloadRoutine = function(callbacks) {

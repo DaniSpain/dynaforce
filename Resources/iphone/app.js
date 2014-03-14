@@ -1,7 +1,5 @@
 var Alloy = require("alloy"), _ = Alloy._, Backbone = Alloy.Backbone;
 
-var SyncObjects = new Array("Account");
-
 Alloy.Globals.force = require("force");
 
 Alloy.Globals.dynaforce = require("dynaforce");
@@ -26,19 +24,5 @@ try {
         Alloy.Globals.tableTop = "70dp";
     }
 } catch (e) {}
-
-Alloy.Globals.SFDCSQLiteFieldMap = {
-    string: "TEXT",
-    "boolean": "BOOLEAN",
-    textarea: "TEXT",
-    "double": "DOUBLE",
-    phone: "TEXT",
-    url: "TEXT",
-    currency: "DOUBLE",
-    "int": "INTEGER",
-    datetime: "DATETIME",
-    date: "DATE",
-    picklist: "TEXT"
-};
 
 Alloy.createController("index");

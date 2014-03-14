@@ -38,17 +38,16 @@ exports.getDateTimeObject = function(sfdcDate) {
 
 exports.createTodaySfdcDate = function() {
     var curdate = new Date();
-    var year = curdate.getFullYear();
-    var month = normalizeDateString(curdate.getMonth() + 1);
-    var day = normalizeDateString(curdate.getDate());
+    curdate.getFullYear();
+    normalizeDateString(curdate.getMonth() + 1);
+    normalizeDateString(curdate.getDate());
     normalizeDateString(curdate.getHours());
     normalizeDateString(curdate.getMinutes());
     normalizeDateString(curdate.getSeconds());
-    var utcdate = new Date(Date.UTC(year, month, day));
-    Ti.API.info("[dynaforce] [sfdcDate] Local Hour: " + curdate.getHours());
-    Ti.API.info("[dynaforce] [sfdcDate] UTC hour: " + utcdate.getHours());
-    Ti.API.info("[dynaforce] [sfdcDate] UTC: " + utcdate);
     Ti.API.info("[dynaforce] [sfdcDate] UTC String: " + curdate.toUTCString());
+    var UTCHours = curdate.toUTCString().substring(17, 19);
+    Ti.API.info("[dynaforce] [sfdcDate] UTC hours: " + UTCHours);
+    curdate.setHours(UTCHours);
     var datestring = getDateString(curdate);
     Ti.API.info("[dynaforce] [sfdcDate] Current datetime SFDC format: " + datestring);
     return datestring;

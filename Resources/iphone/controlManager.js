@@ -122,17 +122,40 @@ exports.readableField = function(field, sobject, dataRow, withLabel, layoutTable
             }
             return label;
         }
+        if ("currency" == type) {
+            var label = Ti.UI.createLabel({
+                color: "#669900",
+                font: {
+                    fontSize: 15
+                },
+                text: dataRow.fieldByName(field),
+                left: 10,
+                touchEnabled: false,
+                width: Ti.UI.SIZE,
+                height: Ti.UI.SIZE
+            });
+            if (withLabel) {
+                fieldLabel = rowset.fieldByName("label");
+                Ti.API.info("[dynaforce] [contolManager] FOUNDED LABEL: " + fieldLabel);
+                return getFieldWithLabel(label, fieldLabel);
+            }
+            return label;
+        }
         if ("date" == type || "datetime" == type) {
             var dateUtils = require("sfdcDate");
             var date = null;
-            if (null != dataRow.fieldByName(field)) var date = new Date(dateUtils.getDateTimeObject(dataRow.fieldByName(field)));
+            var strDate;
+            if (null != dataRow.fieldByName(field)) {
+                var date = new Date(dateUtils.getDateTimeObject(dataRow.fieldByName(field)));
+                strDate = date.toLocaleString();
+            } else strDate = "";
             Ti.API.info("[dynaforce] Date field data: " + date);
             var label = Ti.UI.createLabel({
                 color: "#366E36",
                 font: {
                     fontSize: 12
                 },
-                text: date.toLocaleString(),
+                text: strDate,
                 left: 10,
                 touchEnabled: false,
                 width: Ti.UI.SIZE,

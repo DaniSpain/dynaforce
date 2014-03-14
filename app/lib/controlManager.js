@@ -126,12 +126,37 @@ exports.readableField = function(field, sobject, dataRow, withLabel, layoutTable
 			} else return label;
 		}
 		
+		//CURRENCY
+		if (type=='currency') {
+			var label = Ti.UI.createLabel({
+				color: '#669900',
+				font: { fontSize:15 },
+				//shadowColor: '#aaa',
+				//shadowOffset: {x:5, y:5},
+				//shadowRadius: 3,
+				text: dataRow.fieldByName(field),
+				left: 10,
+				touchEnabled: false,
+				//top: 30,
+				width: Ti.UI.SIZE, height: Ti.UI.SIZE
+			});
+			if (withLabel) {
+				fieldLabel = rowset.fieldByName('label');
+				Ti.API.info('[dynaforce] [contolManager] FOUNDED LABEL: ' + fieldLabel);
+				return getFieldWithLabel(label, fieldLabel);
+			} else return label;
+		}
+		
 		//CASE FIELD IS A DATE or DATE TIME
 		if (type=='date' || type=='datetime') {
 			var dateUtils = require('sfdcDate');
 			var date = null;
-			if (dataRow.fieldByName(field)!=null) 
+			var strDate;
+			if (dataRow.fieldByName(field)!=null) {
 				var date = new Date(dateUtils.getDateTimeObject(dataRow.fieldByName(field)));
+				strDate = date.toLocaleString();
+			}
+			else strDate = '';
 				
 			Ti.API.info('[dynaforce] Date field data: ' + date);
 			var label = Ti.UI.createLabel({
@@ -140,7 +165,7 @@ exports.readableField = function(field, sobject, dataRow, withLabel, layoutTable
 				//shadowColor: '#aaa',
 				//shadowOffset: {x:5, y:5},
 				//shadowRadius: 3,
-				text: date.toLocaleString(),
+				text: strDate,
 				left: 10,
 				touchEnabled: false,
 				//top: 30,
